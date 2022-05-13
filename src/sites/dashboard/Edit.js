@@ -4,7 +4,7 @@ import {Context} from "../../Context"
 import {databaseAddSong, databaseGetConcreteSong} from "../../database"
 import {useSearchParams} from "react-router-dom";
 import { useNavigate } from "react-router"
-import { Button, Input, Form, message, InputNumber } from "antd";
+import { Button, Input, Form, message, InputNumber, Checkbox } from "antd";
 import { grabIdFromUrl } from "../../utils/grabIdFromUrl";
 import { createDiscogsSong } from "../../utils/createDiscogsSong";
 
@@ -18,8 +18,9 @@ const Edit = () => {
     const [searchParams] = useSearchParams()
     const idParam = searchParams.get('id')
 
-    const [form] = Form.useForm();
+    const [stayOnPage, setStayOnPage] = useState(false)
 
+    const [form] = Form.useForm();
     const artist = Form.useWatch('artist', form);
     const title = Form.useWatch('title', form);
     const url = Form.useWatch('url', form);
@@ -55,7 +56,8 @@ const Edit = () => {
     const sendData = () => {
         const songObject = {artist, title, url, year, genre, style}
         databaseAddSong(user.userData.login, songObject, idParam)
-        navigate(`/dashboard/songs`)
+        if(!stayOnPage)
+            navigate(`/dashboard/songs`)
     }
 
     const convertUrl = () => {
@@ -140,7 +142,7 @@ const Edit = () => {
                     </Button>
                 </Form.Item>
 
-            
+                <Checkbox checked={stayOnPage} onChange={()=>setStayOnPage(!stayOnPage)}>Stay on page</Checkbox>
 
             <hr/>
 
