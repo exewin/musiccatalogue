@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
+import { Button } from "antd"
 
 const Container = styled.div`
     text-align: center;
@@ -17,7 +18,8 @@ const PageNotFound = () => {
     return(
         <Container>
             <Error>404 page not found</Error>
-            <Link to="/dashboard"><button>Home</button></Link>
+            <br/>
+            <Link to="/"><Button>Home</Button></Link>
         </Container>
         )
 }
