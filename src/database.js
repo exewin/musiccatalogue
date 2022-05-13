@@ -61,12 +61,23 @@ export const databaseLogin = (login, password) => {
     return success
 }
 
+const findUser = login => {
+    if(database.length > 0){
+        return database.find(user => user.login === login)
+    }
+    else{
+        return false
+    }
+}
+
 
 const databaseUserExists = login => {
-    if(database.find(user => user.login === login))
+    if(findUser(login)) {
         return true
-    else 
+    }
+    else {
         return false
+    }
 }
 
 const databaseDisplay = () => {
@@ -111,7 +122,7 @@ export const databaseRemoveSong = (login, id) => {
     database.find(user => {
         if(user.login === login)
         {
-            console.log(user.songs)
+            console.log(id)
             const arr = user.songs.filter(song => song.id != id)
             user.songs = arr
         }
