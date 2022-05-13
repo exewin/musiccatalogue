@@ -33,7 +33,7 @@ const Dashboard = () => {
             <p title={`Hello sir ${user.userData.login}`}>User: {user.userData.login}</p>
             <Link to="/dashboard/songs"><Button title="Display full list of songs">List 📜</Button></Link>
             <Link to="/dashboard/edit"><Button title="Add song to list">Add ✏️</Button></Link>
-            <Link to="/dashboard/logout"><Button title="Logout and return to login screen" onClick={logout}>Logout</Button></Link>
+            <Button title="Logout and return to login screen" onClick={logout}>Logout</Button>
             <hr/>
             <Outlet/>
         </ProfileBox>

@@ -27,6 +27,7 @@ const VideoPlayer = () => {
             <Iframe
                 type="text/html" width="400" height="200"
                 src={`https://www.youtube.com/embed/${curSong.url}?autoplay=1&controls=0"`}
+                autoplay="1"
             />
         </Container>
     )
