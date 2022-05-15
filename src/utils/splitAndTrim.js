@@ -1,4 +1,7 @@
 export const splitAndTrim = string =>{
+  if(!string)
+    return string
+    
     let arr = string.split(',')
     for(let i = 0; i < arr.length; i++){
         arr[i] = arr[i].trim()
