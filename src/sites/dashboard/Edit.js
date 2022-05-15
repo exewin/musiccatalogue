@@ -4,14 +4,15 @@ import {Context} from "../../Context"
 import {databaseAddSong, databaseGetConcreteSong} from "../../database"
 import {useSearchParams} from "react-router-dom";
 import { useNavigate } from "react-router"
-import { Button, Input, Form, message, InputNumber, Checkbox } from "antd";
+import { Button, Input, Form, message, InputNumber, Checkbox, Slider } from "antd";
 import { grabIdFromYoutubeUrl, grabIdFromDiscogsUrl } from "../../utils/grabIdFromUrl";
 import { createDiscogsSong } from "../../utils/createDiscogsSong";
 import { splitAndTrim } from "../../utils/splitAndTrim";
 
 
 const Container = styled.div`
-    
+    background-color: #fff;
+    border: 1px solid;
 `
 
 const Edit = () => {
@@ -31,6 +32,7 @@ const Edit = () => {
     const style = Form.useWatch('style', form);
     const genre = Form.useWatch('genre', form);
     const discogsUrl = Form.useWatch('discogsUrl', form);
+    const rating = Form.useWatch('rating', form);
 
     const [songEdit, setSongEdit] = useState({})
 
@@ -43,7 +45,7 @@ const Edit = () => {
         fillForm(songEdit)
     },[songEdit])
 
-    const fillForm = ({url, title, artist, year, genres, styles, discogsUrl}) => {
+    const fillForm = ({url, title, artist, year, genres, styles, discogsUrl, rating}) => {
         form.setFieldsValue({
             url: url,
             title: title,
@@ -52,11 +54,21 @@ const Edit = () => {
             genre: genres && genres.join(","),
             style: styles && styles.join(","),
             discogsUrl: discogsUrl,
+            rating: rating,
         });
     }
 
     const sendData = () => {
-        const songObject = {artist, title, url: grabIdFromYoutubeUrl(url), year, genres: splitAndTrim(genre), styles: splitAndTrim(style), discogsUrl: grabIdFromDiscogsUrl(discogsUrl)}
+        const songObject = {
+            artist, 
+            title,
+            url: grabIdFromYoutubeUrl(url), 
+            year, 
+            genres: splitAndTrim(genre), 
+            styles: splitAndTrim(style), 
+            discogsUrl: grabIdFromDiscogsUrl(discogsUrl),
+            rating
+        }
         databaseAddSong(user.userData.login, songObject, idParam)
         if(!stayOnPage)
             navigate(`/dashboard/songs`)
@@ -103,13 +115,13 @@ const Edit = () => {
                     <Input style={{ width: '50%' }} placeholder="example: Blue Monday"/>
                 </Form.Item>
 
-                <Form.Item label="Youtube ID" name="url" tooltip="Full links are also accepted">
+                <Form.Item label="Youtube ID" name="url" tooltip="Full links are also accepted.">
                     <Input style={{ width: '75%' }} placeholder="example: FYH8DsU2WCk"/>
                 </Form.Item>
 
                 <Form.Item label="Discogs ID" name="discogsUrl" 
-                tooltip="Full links are also accepted. MUST be single release, not master. Click fetch to automatically fill info based on ID">
-                    <Input style={{ width: '75%' }} placeholder="example: 360760" addonAfter={convertUrlBtn}/>
+                tooltip="Full links are also accepted. MUST be single release, not master. Click fetch to automatically fill info based on ID.">
+                    <Input style={{ width: '75%' }} placeholder="example: 20755" addonAfter={convertUrlBtn}/>
                 </Form.Item>
 
                 <Form.Item 
@@ -119,32 +131,46 @@ const Edit = () => {
                     <InputNumber 
                         controls={false} style={{ width: '25%' }} placeholder="example: 1983"
                         parser={value => parseInt(value)}
-                        min="1000"
-                        max="9999"
+                        min={1000}
+                        max={9999}
                     />
                 </Form.Item>
 
-                <Form.Item label="Genres" name="genre" tooltip="Separate multiple genres with commas: ,">
+                <Form.Item label="Genres" name="genre" tooltip="Separate multiple genres with commas.">
                     <Input placeholder="example: Electronic"/>
                 </Form.Item>
 
-                <Form.Item label="Styles" name="style" tooltip="Separate multiple styles with commas: ,">
+                <Form.Item label="Styles" name="style" tooltip="Separate multiple styles with commas.">
                     <Input placeholder="example: Synth-pop"/>
                 </Form.Item>
 
+                <Form.Item 
+                    label="Rating" name="rating" defaultValue={55}
+                    tooltip="Your subjective rating. Use 1-100 range."
+                    rules={[{required: true}]}
+                    >
+                    <InputNumber 
+                        controls={false} style={{ width: '25%' }} placeholder="example: 75"
+                        parser={value => parseInt(value)}
+                        min={1}
+                        max={100}
+                    />
+                </Form.Item>
+
+                {!idParam &&
+                    <Form.Item label="Stay on page" tooltip="Check to speed up adding songs.">
+                        <Checkbox checked={stayOnPage} onChange={()=>setStayOnPage(!stayOnPage)}/>
+                    </Form.Item>
+                }
 
                 <Form.Item wrapperCol={{offset: 2, span: 3}}>
                     <Button type="primary" htmlType="submit">
                         {idParam ? 'Edit' : 'Add'}
                     </Button>
+                    {idParam && <Button onClick={()=>fillForm(songEdit)}>Revert Changes</Button>}
                 </Form.Item>
 
-                <Form.Item>
-                    <Checkbox checked={stayOnPage} onChange={()=>setStayOnPage(!stayOnPage)}>Stay on page</Checkbox>
-                </Form.Item>
-            
             </Form>
-
         </Container>
     )
 }
