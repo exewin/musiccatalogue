@@ -15,6 +15,7 @@ color: limegreen;
 text-shadow: 1px 1px green;
 font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 font-style: italic;
+user-select: none;
 `
 
 const Header = () => {
