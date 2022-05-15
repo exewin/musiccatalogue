@@ -2,12 +2,17 @@ import React, {useContext, useEffect, useState} from "react"
 import styled from "styled-components"
 import {Context} from "../../Context"
 import {databaseGetSongList, databaseRemoveSong} from "../../database"
-import { Table, Switch, Radio, Form, Space, Input, Popconfirm, message } from 'antd';
+import { Table, Space, Popconfirm, message } from 'antd'
 import { useNavigate } from "react-router"
+import './customStyles/column.css'
+import youtubeIcon from "../../images/youtubeIcon.png"
 
 const Container = styled.div`
-    background-color: aliceblue;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    border: 1px solid gray;
+`
+
+const Img = styled.img`
+    width:16px;
 `
 
 const Songs = () => {
@@ -34,12 +39,6 @@ const Songs = () => {
         setCurSong(song)
     }
 
-    const handleCopyButton = url => {
-        const link = `https://www.youtube.com/watch?v=${url}`
-        navigator.clipboard.writeText(link)
-        message.success(`link copied`, 0.5)
-    }
-
     const columns = [
     {
         title: 'Artist',
@@ -56,6 +55,7 @@ const Songs = () => {
         title: 'Year',
         dataIndex: 'year',
         sorter: (a, b) => a.year - b.year,
+        className: 'year',
     },
     {
         title: 'Action',
@@ -63,9 +63,9 @@ const Songs = () => {
         align: "right",
         render: (song) => (
             <Space>
-            {song.url && <a onClick={()=>handlePlayButton(song)}>🎵</a>}
-            {song.url && <a onClick={()=>handleCopyButton(song.url)}>📋</a>}
-            <a onClick={()=>handleEditButton(song.id)}>🔧</a>
+            {song.url && <a onClick={()=>handlePlayButton(song)} title="Play song">🎵</a>}
+            {song.url && <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube"><Img src={youtubeIcon}/></a>}
+            <a onClick={()=>handleEditButton(song.id)} title="Edit song details">🔧</a>
             <Popconfirm
                 title="Remove this song?"
                 onConfirm={()=>handleRemoveButton(song.id)}
@@ -89,8 +89,8 @@ const Songs = () => {
                 dataSource={songs}
                 onRow={(song) => {
                     return {
-                      onDoubleClick: () => {song.url && handlePlayButton(song)}, // double click row
-                    };
+                      onDoubleClick: () => {song.url && handlePlayButton(song)}
+                    }
                 }}
             />
             
