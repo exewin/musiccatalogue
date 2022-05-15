@@ -14,7 +14,7 @@ import {VideoPlayer} from "./components/VideoPlayer";
 const Container = styled.div`
 background-color: teal;
 height: 100vh;
-max-width: 960px;
+max-width: 1200px;
 margin: 0 auto;
 `
 
