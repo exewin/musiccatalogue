@@ -2,10 +2,11 @@ import React, {useContext, useEffect, useState} from "react"
 import styled from "styled-components"
 import {Context} from "../../Context"
 import {databaseGetSongList, databaseRemoveSong} from "../../database"
-import { Table, Space, Popconfirm, message } from 'antd'
+import { Table, Space, Popconfirm, Tag } from 'antd'
 import { useNavigate } from "react-router"
-import './customStyles/column.css'
 import youtubeIcon from "../../images/youtubeIcon.png"
+import discogsIcon from "../../images/discogsIcon.png"
+import {filterStylesData} from "../../utils/filterStylesData"
 
 const Container = styled.div`
     border: 1px solid gray;
@@ -13,6 +14,10 @@ const Container = styled.div`
 
 const Img = styled.img`
     width:16px;
+`
+
+const Year = styled.span`
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 `
 
 const Songs = () => {
@@ -43,19 +48,44 @@ const Songs = () => {
     {
         title: 'Artist',
         dataIndex: 'artist',
+        showSorterTooltip: false,
         sorter: (a, b) => a.artist > b.artist ? 1 : -1
         
     },
     {
         title: 'Title',
         dataIndex: 'title',
+        showSorterTooltip: false,
         sorter: (a, b) => a.title > a.title ? 1 : -1
     },
     {
         title: 'Year',
         dataIndex: 'year',
+        showSorterTooltip: false,
         sorter: (a, b) => a.year - b.year,
-        className: 'year',
+        render: (td) => <Year>{td}</Year> ,
+    },
+    {
+        title: 'Genres',
+        dataIndex: 'genres',
+    },
+    {
+        title: 'Styles',
+        dataIndex: 'styles',
+        filterSearch: true,
+        filterMultiple: false,
+        className: "columnWrap",
+        filters: filterStylesData,
+        onFilter: (value, record) => {
+            return record.styles.indexOf(value) >= 0
+        },
+        render: tags => (
+            <span>
+                {tags.map(tag => <Tag color={
+                    filterStylesData.find(a=>a.text === tag) ? filterStylesData.find(a=>a.text === tag).color : ""
+                } key={tag}> {tag} </Tag> )} 
+            </span>
+        ),
     },
     {
         title: 'Action',
@@ -65,6 +95,7 @@ const Songs = () => {
             <Space>
             {song.url && <a onClick={()=>handlePlayButton(song)} title="Play song">🎵</a>}
             {song.url && <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube"><Img src={youtubeIcon}/></a>}
+            {song.discogsUrl && <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" title="Open on Discogs"><Img src={discogsIcon}/></a>}
             <a onClick={()=>handleEditButton(song.id)} title="Edit song details">🔧</a>
             <Popconfirm
                 title="Remove this song?"
