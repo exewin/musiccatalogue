@@ -25,14 +25,14 @@ const Edit = () => {
     const [stayOnPage, setStayOnPage] = useState(false)
 
     const [form] = Form.useForm();
-    const artist = Form.useWatch('artist', form);
-    const title = Form.useWatch('title', form);
-    const url = Form.useWatch('url', form);
-    const year = Form.useWatch('year', form);
-    const style = Form.useWatch('style', form);
-    const genre = Form.useWatch('genre', form);
-    const discogsUrl = Form.useWatch('discogsUrl', form);
-    const rating = Form.useWatch('rating', form);
+    const artistValue = Form.useWatch('artist', form);
+    const titleValue = Form.useWatch('title', form);
+    const urlValue = Form.useWatch('url', form);
+    const yearValue = Form.useWatch('year', form);
+    const styleValue = Form.useWatch('style', form);
+    const genreValue = Form.useWatch('genre', form);
+    const discogsUrlValue = Form.useWatch('discogsUrl', form);
+    const ratingValue = Form.useWatch('rating', form);
 
     const [songEdit, setSongEdit] = useState({})
 
@@ -42,7 +42,8 @@ const Edit = () => {
     },[])
 
     useEffect(()=>{
-        fillForm(songEdit)
+        if(Object.keys(songEdit).length)
+            fillForm(songEdit)
     },[songEdit])
 
     const fillForm = ({url, title, artist, year, genres, styles, discogsUrl, rating}) => {
@@ -54,20 +55,20 @@ const Edit = () => {
             genre: genres && genres.join(","),
             style: styles && styles.join(","),
             discogsUrl: discogsUrl,
-            rating: rating,
+            rating: rating ? rating : ratingValue,
         });
     }
 
     const sendData = () => {
         const songObject = {
-            artist, 
-            title,
-            url: grabIdFromYoutubeUrl(url), 
-            year, 
-            genres: splitAndTrim(genre), 
-            styles: splitAndTrim(style), 
-            discogsUrl: grabIdFromDiscogsUrl(discogsUrl),
-            rating
+            artist: artistValue, 
+            title: titleValue,
+            url: grabIdFromYoutubeUrl(urlValue), 
+            year: yearValue, 
+            genres: splitAndTrim(genreValue), 
+            styles: splitAndTrim(styleValue), 
+            discogsUrl: grabIdFromDiscogsUrl(discogsUrlValue),
+            rating: ratingValue
         }
         databaseAddSong(user.userData.login, songObject, idParam)
         if(!stayOnPage)
@@ -76,7 +77,7 @@ const Edit = () => {
 
     const fetchFromDiscogs = async() => {
         try {
-            const response = await axios.get(`https://api.discogs.com/releases/${grabIdFromDiscogsUrl(discogsUrl)}`)
+            const response = await axios.get(`https://api.discogs.com/releases/${grabIdFromDiscogsUrl(discogsUrlValue)}`)
             fillForm(createDiscogsSong(response.data))
         } catch (error) {
             message.error('invalid ID')
@@ -96,6 +97,7 @@ const Edit = () => {
             <br/>
             <Form 
             name="edit"
+            initialValues={{ rating: 50 }}
             labelCol={{span: 3}} wrapperCol={{span: 16}}
             form={form}
             onFinish={onFinish}
@@ -145,7 +147,7 @@ const Edit = () => {
                 </Form.Item>
 
                 <Form.Item 
-                    label="Rating" name="rating" defaultValue={55}
+                    label="Rating" name="rating"
                     tooltip="Your subjective rating. Use 1-100 range."
                     rules={[{required: true}]}
                     >
