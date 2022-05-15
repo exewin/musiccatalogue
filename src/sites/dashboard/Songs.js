@@ -7,6 +7,10 @@ import { useNavigate } from "react-router"
 import youtubeIcon from "../../images/youtubeIcon.png"
 import discogsIcon from "../../images/discogsIcon.png"
 import {filterStylesData} from "../../utils/filterStylesData"
+import chroma from 'chroma-js';
+
+const ratingScale = chroma.scale(['red', 'orange', 'green', "green", 'teal', 'purple']).domain([1,50,80,90,95,100,100])
+const yearScale = chroma.scale(['steelblue', 'lightseagreen', 'seagreen', 'olive', 'darkgoldenrod', 'salmon']).domain([1960,2025])
 
 const Container = styled.div`
     border: 1px solid gray;
@@ -16,8 +20,11 @@ const Img = styled.img`
     width:16px;
 `
 
-const Year = styled.span`
+const Number = styled.span`
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    padding: 5px;
+    border-radius: 5px;
+    color:white;
 `
 
 const Songs = () => {
@@ -56,14 +63,14 @@ const Songs = () => {
         title: 'Title',
         dataIndex: 'title',
         showSorterTooltip: false,
-        sorter: (a, b) => a.title > a.title ? 1 : -1
+        sorter: (a, b) => a.title > b.title ? 1 : -1
     },
     {
         title: 'Year',
         dataIndex: 'year',
         showSorterTooltip: false,
         sorter: (a, b) => a.year - b.year,
-        render: (td) => <Year>{td}</Year> ,
+        render: (td) => <Number style={{backgroundColor:yearScale(td)}}>{td}</Number> ,
     },
     {
         title: 'Genres',
@@ -74,18 +81,26 @@ const Songs = () => {
         dataIndex: 'styles',
         filterSearch: true,
         filterMultiple: false,
-        className: "columnWrap",
         filters: filterStylesData,
         onFilter: (value, record) => {
-            return record.styles.indexOf(value) >= 0
+            return record.styles ? record.styles.indexOf(value) >= 0 : 0
         },
         render: tags => (
             <span>
-                {tags.map(tag => <Tag color={
+                {tags && tags.map(tag => <Tag color={
                     filterStylesData.find(a=>a.text === tag) ? filterStylesData.find(a=>a.text === tag).color : ""
                 } key={tag}> {tag} </Tag> )} 
             </span>
         ),
+    },
+    {
+        title: 'Rating',
+        dataIndex: 'rating',
+        width: 25,
+        align: 'center',
+        showSorterTooltip: false,
+        sorter: (a, b) => a.rating - b.rating,
+        render: (td) => <Number style={{backgroundColor:ratingScale(td)}}>{td}</Number> ,
     },
     {
         title: 'Action',
