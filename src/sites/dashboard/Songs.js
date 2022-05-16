@@ -2,18 +2,20 @@ import React, {useContext, useEffect, useState} from "react"
 import styled from "styled-components"
 import {Context} from "../../Context"
 import {databaseGetSongList, databaseRemoveSong} from "../../database"
-import { Table, Space, Popconfirm, Tag } from 'antd'
+import { Table, Space, Popconfirm, Tag, Switch, Form } from 'antd'
 import { useNavigate } from "react-router"
 import youtubeIcon from "../../images/youtubeIcon.png"
 import discogsIcon from "../../images/discogsIcon.png"
 import {filterStylesData} from "../../utils/filterStylesData"
-import chroma from 'chroma-js';
+import chroma from 'chroma-js'
 
-const ratingScale = chroma.scale(['red', 'orange', 'green', "green", 'teal', 'purple']).domain([1,50,80,90,95,100,100])
+const ratingScale = chroma.scale(['red', 'orange', 'gold',"green", 'teal', 'purple']).domain([1,40,64,80,90,100,100])
 const yearScale = chroma.scale(['steelblue', 'lightseagreen', 'seagreen', 'olive', 'darkgoldenrod', 'salmon']).domain([1960,2025])
 
 const Container = styled.div`
     border: 1px solid gray;
+    padding: 5px;
+    background-color: white;
 `
 
 const Img = styled.img`
@@ -25,11 +27,13 @@ const Number = styled.span`
     padding: 5px;
     border-radius: 5px;
     color:white;
+    //background-color is controlled with inline style
 `
 
 const Songs = () => {
 
     const [songs, setSongs] = useState([])
+    const [toggleRating, setToggleRating] = useState(true)
     const {user, setCurSong} = useContext(Context)
     const navigate = useNavigate()
     const updateSongList = () => setSongs(databaseGetSongList(user.userData.login))
@@ -51,7 +55,7 @@ const Songs = () => {
         setCurSong(song)
     }
 
-    const columns = [
+    let columns = [
     {
         title: 'Artist',
         dataIndex: 'artist',
@@ -98,6 +102,7 @@ const Songs = () => {
         dataIndex: 'rating',
         width: 25,
         align: 'center',
+        hidden: toggleRating,
         showSorterTooltip: false,
         sorter: (a, b) => a.rating - b.rating,
         render: (td) => <Number style={{backgroundColor:ratingScale(td)}}>{td}</Number> ,
@@ -122,23 +127,28 @@ const Songs = () => {
             </Space>
         ),
       },
-    ];
+    ].filter(col => !col.hidden )
 
     
     return(
         <Container>
-            <Table
-                rowKey={record => record.id}
-                size="small"
-                pagination={{pageSize:100, hideOnSinglePage:true}}
-                columns={columns}
-                dataSource={songs}
-                onRow={(song) => {
-                    return {
-                      onDoubleClick: () => {song.url && handlePlayButton(song)}
-                    }
-                }}
-            />
+            <Form layout="inline" style={{ marginBottom: 0 }}>
+                <Form.Item label="Hide ratings">
+                    <Switch checked={toggleRating} onChange={()=>setToggleRating(!toggleRating)}/>
+                </Form.Item>
+            </Form>
+                <Table
+                    rowKey={record => record.id}
+                    size="small"
+                    pagination={{pageSize:100, hideOnSinglePage:true}}
+                    columns={columns}
+                    dataSource={songs}
+                    onRow={(song) => {
+                        return {
+                        onDoubleClick: () => {song.url && handlePlayButton(song)}
+                        }
+                    }}
+                />
             
         </Container>
         )
