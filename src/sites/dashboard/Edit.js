@@ -122,7 +122,7 @@ const Edit = () => {
                 </Form.Item>
 
                 <Form.Item label="Discogs ID" name="discogsUrl" 
-                tooltip="Full links are also accepted. MUST be single release, not master. Click fetch to automatically fill info based on ID.">
+                tooltip="Full links are also accepted. MUST be single release, not master. Click fetch to automatically fill info based on ID. You can also put random number to get random song.">
                     <Input style={{ width: '75%' }} placeholder="example: 20755" addonAfter={convertUrlBtn}/>
                 </Form.Item>
 
