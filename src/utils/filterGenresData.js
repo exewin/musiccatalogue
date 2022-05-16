@@ -1,17 +1,17 @@
-export const filterStylesData = [
+export const filterGenresData = [
     {
-      text: 'Techno',
-      value: 'Techno',
+      text: 'Electronic',
+      value: 'Electronic',
       color: 'purple'
     },
     {
-      text: 'Ambient',
-      value: 'Ambient',
+      text: 'Rock',
+      value: 'Rock',
       color: 'volcano'
     },
     {
-      text: 'House',
-      value: 'House',
+      text: 'Pop',
+      value: 'Pop',
       color: 'gold'
     },
 ]
