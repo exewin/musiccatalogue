@@ -28,17 +28,18 @@ const Number = styled.span`
     padding: 5px;
     border-radius: 5px;
     color:white;
-    //background-color is controlled with inline style
+    background-color: ${props => props.color || '#fff'};
 `
 
 const Songs = () => {
 
-    const myRef = useRef(null)
+    const artistRef = useRef(null)
+    const titleRef = useRef(null)
     const {Search} = Input
     const [songs, setSongs] = useState([])
     const [genres, setGenres] = useState([])
     const [styles, setStyles] = useState([])
-    const [toggleRating, setToggleRating] = useState(true)
+    const [toggleRating, setToggleRating] = useState(false)
     const {user, setCurSong} = useContext(Context)
     const navigate = useNavigate()
     const updateSongList = () =>{
@@ -77,25 +78,25 @@ const Songs = () => {
         setCurSong(song)
     }
 
-    let locale = {
+    const locale = {
         emptyText: <Empty  description="This list is empty..." />
     }
 
-    let columns = [
+    const columns = [
     {
         title: 'Artist',
         dataIndex: 'artist',
         showSorterTooltip: false,
         sorter: (a, b) => a.artist > b.artist ? 1 : -1,
-        onFilterDropdownVisibleChange: (mode) => mode && myRef.current.focus(),
+        onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => artistRef.current.focus(), 25),
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
             return( 
                 <><Search
-                    ref={myRef}
-                    autoFocus
+                    ref={artistRef}
                     value={selectedKeys[0]}
                     onChange={(e)=>{
                         setSelectedKeys(e.target.value?[e.target.value]:[])
+                        confirm({ closeDropdown: false })
                     }}
                     onSearch={()=>{
                         confirm()
@@ -116,13 +117,15 @@ const Songs = () => {
         dataIndex: 'title',
         showSorterTooltip: false,
         sorter: (a, b) => a.title > b.title ? 1 : -1,
+        onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => titleRef.current.focus(), 25),
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
             return( 
                 <><Search
-                    autoFocus
+                    ref={titleRef}
                     value={selectedKeys[0]}
                     onChange={(e)=>{
                         setSelectedKeys(e.target.value?[e.target.value]:[])
+                        confirm({ closeDropdown: false })
                     }}
                     onSearch={()=>{
                         confirm()
@@ -142,12 +145,11 @@ const Songs = () => {
         dataIndex: 'year',
         showSorterTooltip: false,
         sorter: (a, b) => a.year - b.year,
-        render: (td) => <Number style={{backgroundColor:yearScale(td)}}>{td}</Number> ,
+        render: (td) => <Number color={yearScale(td)}>{td}</Number> ,
     },
     {
         title: 'Genres',
         dataIndex: 'genres',
-        filterSearch: true,
         filterMultiple: false,
         filters: mappedGenreFilters,
         onFilter: (value, record) => {
@@ -164,7 +166,6 @@ const Songs = () => {
     {
         title: 'Styles',
         dataIndex: 'styles',
-        filterSearch: true,
         filterMultiple: false,
         filters: mappedStyleFilters,
         onFilter: (value, record) => {
@@ -186,7 +187,7 @@ const Songs = () => {
         hidden: toggleRating,
         showSorterTooltip: false,
         sorter: (a, b) => a.rating - b.rating,
-        render: (td) => <Number style={{backgroundColor:ratingScale(td)}}>{td}</Number> ,
+        render: (td) => <Number color={ratingScale(td)}>{td}</Number> ,
     },
     {
         title: 'Action',
