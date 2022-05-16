@@ -1,12 +1,13 @@
-import React, {useContext, useEffect, useState} from "react"
+import React, { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
-import {Context} from "../../Context"
-import {databaseGetSongList, databaseRemoveSong} from "../../database"
-import { Table, Space, Popconfirm, Tag, Switch, Form } from 'antd'
+import { Context } from "../../Context"
 import { useNavigate } from "react-router"
+import { databaseGetSongList, databaseRemoveSong } from "../../database"
+import { Table, Space, Popconfirm, Tag, Switch, Form, Input } from 'antd'
 import youtubeIcon from "../../images/youtubeIcon.png"
 import discogsIcon from "../../images/discogsIcon.png"
-import {filterStylesData} from "../../utils/filterStylesData"
+import { filterStylesData } from "../../utils/filterStylesData"
+import { filterGenresData } from "../../utils/filterGenresData"
 import chroma from 'chroma-js'
 
 const ratingScale = chroma.scale(['red', 'orange', 'gold',"green", 'teal', 'purple']).domain([1,40,64,80,90,100,100])
@@ -32,8 +33,10 @@ const Number = styled.span`
 
 const Songs = () => {
 
+    const {Search} = Input
     const [songs, setSongs] = useState([])
     const [toggleRating, setToggleRating] = useState(true)
+    const [searchText, setSearchText] = useState("")
     const {user, setCurSong} = useContext(Context)
     const navigate = useNavigate()
     const updateSongList = () => setSongs(databaseGetSongList(user.userData.login))
@@ -55,12 +58,25 @@ const Songs = () => {
         setCurSong(song)
     }
 
+
+
     let columns = [
     {
         title: 'Artist',
         dataIndex: 'artist',
         showSorterTooltip: false,
-        sorter: (a, b) => a.artist > b.artist ? 1 : -1
+        sorter: (a, b) => a.artist > b.artist ? 1 : -1,
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm}) => {
+            return( 
+                <Search 
+                    autoFocus
+                    value={selectedKeys[0]}
+                    onChange={(e)=>setSelectedKeys(e.target.value?[e.target.value]:[])}
+                    onPressEnter={()=>confirm()}
+                />
+            )
+        },
+        onFilter: (value, record) => record.artist.toLowerCase().includes(value.toLowerCase()),
         
     },
     {
@@ -79,6 +95,19 @@ const Songs = () => {
     {
         title: 'Genres',
         dataIndex: 'genres',
+        filterSearch: true,
+        filterMultiple: false,
+        filters: filterGenresData,
+        onFilter: (value, record) => {
+            return record.genres ? record.genres.indexOf(value) >= 0 : 0
+        },
+        render: tags => (
+            <span>
+                {tags && tags.map(tag => <Tag color={
+                    filterGenresData.find(a=>a.text === tag) ? filterGenresData.find(a=>a.text === tag).color : ""
+                } key={tag}> {tag} </Tag> )} 
+            </span>
+        ),
     },
     {
         title: 'Styles',
@@ -127,8 +156,9 @@ const Songs = () => {
             </Space>
         ),
       },
-    ].filter(col => !col.hidden )
+    ].filter(col => !col.hidden)
 
+    console.log(searchText)
     
     return(
         <Container>
