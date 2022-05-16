@@ -4,7 +4,7 @@ import {Context} from "../../Context"
 import {databaseAddSong, databaseGetConcreteSong} from "../../database"
 import {useSearchParams} from "react-router-dom";
 import { useNavigate } from "react-router"
-import { Button, Input, Form, message, InputNumber, Checkbox, Slider } from "antd";
+import { Button, Input, Form, message, InputNumber, Checkbox } from "antd";
 import { grabIdFromYoutubeUrl, grabIdFromDiscogsUrl } from "../../utils/grabIdFromUrl";
 import { createDiscogsSong } from "../../utils/createDiscogsSong";
 import { splitAndTrim } from "../../utils/splitAndTrim";
