@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useState, useRef } from "react"
 import styled from "styled-components"
 import { Context } from "../../Context"
 import { useNavigate } from "react-router"
-import { databaseGetSongList, databaseRemoveSong } from "../../database"
-import { Table, Space, Popconfirm, Tag, Switch, Form, Input } from 'antd'
+import { databaseGetListInfo, databaseRemoveSong } from "../../database"
+import { Table, Space, Popconfirm, Tag, Switch, Form, Input, Empty, Button } from 'antd'
+import { SearchOutlined } from "@ant-design/icons"
 import youtubeIcon from "../../images/youtubeIcon.png"
 import discogsIcon from "../../images/discogsIcon.png"
-import { filterStylesData } from "../../utils/filterStylesData"
-import { filterGenresData } from "../../utils/filterGenresData"
 import chroma from 'chroma-js'
+import { getColor } from "../../utils/getColorBasedOnString"
 
 const ratingScale = chroma.scale(['red', 'orange', 'gold',"green", 'teal', 'purple']).domain([1,40,64,80,90,100,100])
 const yearScale = chroma.scale(['steelblue', 'lightseagreen', 'seagreen', 'olive', 'darkgoldenrod', 'salmon']).domain([1960,2025])
@@ -33,17 +33,36 @@ const Number = styled.span`
 
 const Songs = () => {
 
+    const myRef = useRef(null)
     const {Search} = Input
     const [songs, setSongs] = useState([])
+    const [genres, setGenres] = useState([])
+    const [styles, setStyles] = useState([])
     const [toggleRating, setToggleRating] = useState(true)
-    const [searchText, setSearchText] = useState("")
     const {user, setCurSong} = useContext(Context)
     const navigate = useNavigate()
-    const updateSongList = () => setSongs(databaseGetSongList(user.userData.login))
+    const updateSongList = () =>{
+        const [dbsongs, dbgenres, dbstyles] = databaseGetListInfo(user.userData.login)
+        setSongs(dbsongs)
+        setStyles(dbstyles)
+        setGenres(dbgenres)
+    }
 
     useEffect(()=>{
         updateSongList()
     },[])
+
+    const mappedGenreFilters = genres.map(g => ({
+        text: g,
+        value: g,
+        color: getColor(g)
+    }))
+
+    const mappedStyleFilters = styles.map(s => ({
+        text: s,
+        value: s,
+        color: getColor(s)
+    }))
 
     const handleRemoveButton = id => {
         databaseRemoveSong(user.userData.login, id)
@@ -58,7 +77,9 @@ const Songs = () => {
         setCurSong(song)
     }
 
-
+    let locale = {
+        emptyText: <Empty  description="This list is empty..." />
+    }
 
     let columns = [
     {
@@ -66,16 +87,27 @@ const Songs = () => {
         dataIndex: 'artist',
         showSorterTooltip: false,
         sorter: (a, b) => a.artist > b.artist ? 1 : -1,
-        filterDropdown: ({setSelectedKeys, selectedKeys, confirm}) => {
+        onFilterDropdownVisibleChange: (mode) => mode && myRef.current.focus(),
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
             return( 
-                <Search 
+                <><Search
+                    ref={myRef}
                     autoFocus
                     value={selectedKeys[0]}
-                    onChange={(e)=>setSelectedKeys(e.target.value?[e.target.value]:[])}
-                    onPressEnter={()=>confirm()}
+                    onChange={(e)=>{
+                        setSelectedKeys(e.target.value?[e.target.value]:[])
+                    }}
+                    onSearch={()=>{
+                        confirm()
+                    }}
                 />
+                <Button size="small" onClick={()=>{
+                    clearFilters()
+                    confirm()
+                }}>Clear</Button></>
             )
         },
+        filterIcon: () => <SearchOutlined/>,
         onFilter: (value, record) => record.artist.toLowerCase().includes(value.toLowerCase()),
         
     },
@@ -83,7 +115,27 @@ const Songs = () => {
         title: 'Title',
         dataIndex: 'title',
         showSorterTooltip: false,
-        sorter: (a, b) => a.title > b.title ? 1 : -1
+        sorter: (a, b) => a.title > b.title ? 1 : -1,
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
+            return( 
+                <><Search
+                    autoFocus
+                    value={selectedKeys[0]}
+                    onChange={(e)=>{
+                        setSelectedKeys(e.target.value?[e.target.value]:[])
+                    }}
+                    onSearch={()=>{
+                        confirm()
+                    }}
+                />
+                <Button size="small" onClick={()=>{
+                    clearFilters()
+                    confirm()
+                }}>Clear</Button></>
+            )
+        },
+        filterIcon: () => <SearchOutlined/>,
+        onFilter: (value, record) => record.title.toLowerCase().includes(value.toLowerCase()),
     },
     {
         title: 'Year',
@@ -97,15 +149,15 @@ const Songs = () => {
         dataIndex: 'genres',
         filterSearch: true,
         filterMultiple: false,
-        filters: filterGenresData,
+        filters: mappedGenreFilters,
         onFilter: (value, record) => {
             return record.genres ? record.genres.indexOf(value) >= 0 : 0
         },
         render: tags => (
             <span>
-                {tags && tags.map(tag => <Tag color={
-                    filterGenresData.find(a=>a.text === tag) ? filterGenresData.find(a=>a.text === tag).color : ""
-                } key={tag}> {tag} </Tag> )} 
+                {tags && tags.map(tag => <Tag key={tag} color={
+                    mappedGenreFilters.find(a=>a.text === tag) ? mappedGenreFilters.find(a=>a.text === tag).color : ""
+                }> {tag} </Tag> )} 
             </span>
         ),
     },
@@ -114,15 +166,15 @@ const Songs = () => {
         dataIndex: 'styles',
         filterSearch: true,
         filterMultiple: false,
-        filters: filterStylesData,
+        filters: mappedStyleFilters,
         onFilter: (value, record) => {
             return record.styles ? record.styles.indexOf(value) >= 0 : 0
         },
         render: tags => (
             <span>
-                {tags && tags.map(tag => <Tag color={
-                    filterStylesData.find(a=>a.text === tag) ? filterStylesData.find(a=>a.text === tag).color : ""
-                } key={tag}> {tag} </Tag> )} 
+                {tags && tags.map(tag => <Tag key={tag} color={
+                    mappedStyleFilters.find(a=>a.text === tag) ? mappedStyleFilters.find(a=>a.text === tag).color : ""
+                }> {tag} </Tag> )} 
             </span>
         ),
     },
@@ -157,12 +209,10 @@ const Songs = () => {
         ),
       },
     ].filter(col => !col.hidden)
-
-    console.log(searchText)
     
     return(
         <Container>
-            <Form layout="inline" style={{ marginBottom: 0 }}>
+            <Form layout="inline" style={{ marginBottom: 2 }}>
                 <Form.Item label="Hide ratings">
                     <Switch checked={toggleRating} onChange={()=>setToggleRating(!toggleRating)}/>
                 </Form.Item>
@@ -173,6 +223,7 @@ const Songs = () => {
                     pagination={{pageSize:100, hideOnSinglePage:true}}
                     columns={columns}
                     dataSource={songs}
+                    locale={locale}
                     onRow={(song) => {
                         return {
                         onDoubleClick: () => {song.url && handlePlayButton(song)}

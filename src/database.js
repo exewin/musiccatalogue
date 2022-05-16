@@ -19,7 +19,13 @@ export const databaseCreateUser = (login, password) => {
     if(!databaseCreateUserValidate(login, password))
         return
     if(!databaseUserExists(login)){
-        database.push({login, password, songs:[]})
+        database.push({
+            login, 
+            password, 
+            songs:[],
+            genres:[],
+            styles:[],
+        })
     databaseSave()
     message.success(`account ${login} created!`, 1)
     } else
@@ -113,6 +119,8 @@ export const databaseAddSong = (login, song, id) => {
                 user.songs.push(song)
                 message.success(`song ${song.title} added`)
             }
+            databaseAddGenres(user, song.genres)
+            databaseAddStyles(user, song.styles)
             databaseSave()
         }
     })
@@ -141,13 +149,30 @@ export const databaseGetConcreteSong = (login, id) => {
     return song
 }
 
-export const databaseGetSongList = login => {
+export const databaseGetListInfo = login => {
     let songs = []
+    let styles = []
+    let genres = []
     database.find(user => {
         if(user.login === login)
         {
             songs = user.songs
+            styles = user.styles
+            genres = user.genres
         }
     })
-    return songs
+    return [songs, genres, styles]
+}
+
+
+const databaseAddStyles = (user, styles) => {
+    let newStyles = styles.concat(user.styles)
+    let removeDuplicates = [...new Set(newStyles)]
+    user.styles = removeDuplicates
+}
+
+const databaseAddGenres = (user, genres) => {
+    let newgenres = genres.concat(user.genres)
+    let removeDuplicates = [...new Set(newgenres)]
+    user.genres = removeDuplicates
 }
