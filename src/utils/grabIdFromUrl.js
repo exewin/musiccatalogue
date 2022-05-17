@@ -2,14 +2,11 @@ export const grabIdFromYoutubeUrl = url => {
     if(!url)
         return
 
-    let validate = url.indexOf("=")
-    if(validate < 0)
-    {
+    if(url.indexOf("=") < 0)
         return url
-    }
-    let res = url.split("=");
-    let id = res[1].substring(0,11)
-    return id
+
+    const res = url.split("=");
+    return res[1].substring(0,11)
 }
 
 export const grabIdFromDiscogsUrl = url => {

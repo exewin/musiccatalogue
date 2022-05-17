@@ -2,16 +2,10 @@ export const splitAndTrim = string =>{
   if(!string)
     return string
     
-    let arr = string.split(',')
-    for(let i = 0; i < arr.length; i++){
-        arr[i] = arr[i].trim()
-    }
-    arr = capitalizeWords(arr)
-    return arr
+    const arr = string.split(',').map(i => i.trim())
+    return capitalizeWords(arr)
 }
 
-function capitalizeWords(arr) {
-    return arr.map(element => {
-      return element.charAt(0).toUpperCase() + element.substring(1);
-    });
-  }
+const capitalizeWords = arr => {
+    return arr.map(element => element.charAt(0).toUpperCase() + element.substring(1))
+}
