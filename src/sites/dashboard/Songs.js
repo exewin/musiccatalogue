@@ -43,6 +43,11 @@ const Beatles = styled.img`
     border: 2px solid;
 `
 
+const TagWrapper = styled.span`
+    cursor: pointer;
+    user-select: none;
+`
+
 const Songs = () => {
 
     const artistRef = useRef(null)
@@ -51,6 +56,7 @@ const Songs = () => {
     const [songs, setSongs] = useState([])
     const [genres, setGenres] = useState([])
     const [styles, setStyles] = useState([])
+    const [tableInfo, setTableInfo] = useState({filteredInfo: null, sortedInfo: null})
     const [loading, setLoading] = useState(true)
     const [toggleRating, setToggleRating] = useState(false)
     const {user, setCurSong} = useContext(Context)
@@ -61,6 +67,9 @@ const Songs = () => {
         setStyles(dbstyles)
         setGenres(dbgenres)
     }
+
+    const sortedInfo = tableInfo.sortedInfo || {};
+    const filteredInfo = tableInfo.filteredInfo || {};
 
     useEffect(()=>{
         updateSongList()
@@ -97,6 +106,31 @@ const Songs = () => {
     const handlePlayButton = song => {
         setCurSong(song)
     }
+    
+    const handleTableChange = (pagination, filters, sorter) => {
+        console.log(filters, sorter)
+        setTableInfo({
+            filteredInfo: filters,
+            sortedInfo: sorter,
+        })
+    }
+
+    const clearFilters = () => {
+        setTableInfo({
+            ...tableInfo,
+            filteredInfo: null,
+        })
+    }
+
+    const filterWithTag = (tag, column) => {
+        setTableInfo({
+            ...tableInfo,
+            filteredInfo: {
+                ...filteredInfo,
+                [column]: [tag]
+            }
+        })
+    }
 
     const emptyTableScreen = {
         emptyText: <><br/><br/><br/><br/><br/><Empty  description="This list is empty..." /><br/><br/><br/></>
@@ -108,9 +142,9 @@ const Songs = () => {
 
     const columns = [
     {
-        title: 'Artist',
-        dataIndex: 'artist',
+        title: 'Artist', dataIndex: 'artist', key: 'artist',
         showSorterTooltip: false,
+        filteredValue: filteredInfo.artist || null,
         sorter: (a, b) => a.artist > b.artist ? 1 : -1,
         onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => artistRef.current.focus(), 25),
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
@@ -137,9 +171,9 @@ const Songs = () => {
         
     },
     {
-        title: 'Title',
-        dataIndex: 'title',
+        title: 'Title', dataIndex: 'title', key: 'title',
         showSorterTooltip: false,
+        filteredValue: filteredInfo.title || null,
         sorter: (a, b) => a.title > b.title ? 1 : -1,
         onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => titleRef.current.focus(), 25),
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
@@ -165,8 +199,7 @@ const Songs = () => {
         onFilter: (value, record) => record.title.toLowerCase().includes(value.toLowerCase()),
     },
     {
-        title: 'Year',
-        dataIndex: 'year',
+        title: 'Year', dataIndex: 'year', key: 'year',
         showSorterTooltip: false,
         sorter: (a, b) => a.year - b.year,
         render: (td) => <Number color={yearScale(td)}>{td}</Number> ,
@@ -176,36 +209,45 @@ const Songs = () => {
         dataIndex: 'genres',
         filterMultiple: false,
         filters: mappedGenreFilters,
+        filteredValue: filteredInfo.genres || null,
         onFilter: (value, record) => {
             return record.genres ? record.genres.indexOf(value) >= 0 : 0
         },
-        render: tags => (
+        render: (tags) => (
             <span>
-                {tags && tags.map(tag => <Tag key={tag} color={
-                    mappedGenreFilters.find(a=>a.text === tag) ? mappedGenreFilters.find(a=>a.text === tag).color : ""
-                }> {tag} </Tag> )} 
+                {
+                tags && tags.map(tag => 
+                    <TagWrapper><Tag 
+                    key={tag} 
+                    color={mappedGenreFilters.find(a=>a.text === tag) ? mappedGenreFilters.find(a=>a.text === tag).color : ""}
+                    onClick={() => filterWithTag(tag, "genres")}
+                > 
+                {tag} </Tag></TagWrapper> )
+                } 
             </span>
         ),
     },
     {
-        title: 'Styles',
-        dataIndex: 'styles',
+        title: 'Styles', dataIndex: 'styles', key: 'styles',
         filterMultiple: false,
         filters: mappedStyleFilters,
+        filteredValue: filteredInfo.styles || null,
         onFilter: (value, record) => {
             return record.styles ? record.styles.indexOf(value) >= 0 : 0
         },
         render: tags => (
             <span>
-                {tags && tags.map(tag => <Tag key={tag} color={
-                    mappedStyleFilters.find(a=>a.text === tag) ? mappedStyleFilters.find(a=>a.text === tag).color : ""
-                }> {tag} </Tag> )} 
+                {tags && tags.map(tag => 
+                <TagWrapper><Tag 
+                    key={tag}
+                    color={mappedStyleFilters.find(a=>a.text === tag) ? mappedStyleFilters.find(a=>a.text === tag).color : ""}
+                    onClick={() => filterWithTag(tag, "styles")}
+                > {tag} </Tag></TagWrapper> )} 
             </span>
         ),
     },
     {
-        title: 'Rating',
-        dataIndex: 'rating',
+        title: 'Rating', dataIndex: 'rating', key: 'rating',
         width: 25,
         align: 'center',
         hidden: toggleRating,
@@ -214,8 +256,7 @@ const Songs = () => {
         render: (td) => <Number color={ratingScale(td)}>{td}</Number> ,
     },
     {
-        title: 'Action',
-        key: 'action',
+        title: 'Action', key: 'action',
         align: "right",
         render: (song) => (
             <Space>
@@ -237,19 +278,23 @@ const Songs = () => {
     
     return(
         <Container>
-            <Form layout="inline" style={{ marginBottom: 2 }}>
+            <Form layout="inline" style={{ marginBottom: 5 }}>
                 <Form.Item label="Hide ratings">
                     <Switch checked={toggleRating} onChange={()=>setToggleRating(!toggleRating)}/>
                 </Form.Item>
+                <Form.Item>
+                <Button onClick={clearFilters}>Clear filters</Button>
+                </Form.Item>
             </Form>
                 <Table
-                    loading={ loading && loadingScreen}
+                    onChange={handleTableChange}
+                    loading={loading && loadingScreen}
+                    locale={emptyTableScreen}
                     rowKey={record => record.id}
                     size="small"
                     pagination={{pageSize:100, hideOnSinglePage:true}}
                     columns={columns}
                     dataSource={songs}
-                    locale={emptyTableScreen}
                     onRow={(song) => {
                         return {
                         onDoubleClick: () => {song.url && handlePlayButton(song)}
