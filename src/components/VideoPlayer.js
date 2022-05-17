@@ -37,7 +37,6 @@ const Title = styled.span`
 const VideoPlayer = () => {
     const {curSong, setCurSong} = useContext(Context)
     const [minimalized, setMinimalized] = useState(false)
-    console.log(minimalized)
     return(
         curSong &&
         <Container>
@@ -48,7 +47,7 @@ const VideoPlayer = () => {
                 <Button title="turn off and hide player" onClick={()=>setCurSong(null)}>❌</Button>
             </TitleBar>
             <Iframe
-                display={minimalized?"block":"none"}
+                display={minimalized?"none":"block"}
                 type="text/html" width="400" height="200"
                 src={`https://www.youtube.com/embed/${curSong.url}?autoplay=1&controls=0"`}
                 autoplay="1"
