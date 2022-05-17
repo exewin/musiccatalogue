@@ -3,10 +3,11 @@ import styled from "styled-components"
 import { Context } from "../../Context"
 import { useNavigate } from "react-router"
 import { databaseGetListInfo, databaseRemoveSong } from "../../database"
-import { Table, Space, Popconfirm, Tag, Switch, Form, Input, Empty, Button } from 'antd'
+import { Table, Space, Popconfirm, Tag, Switch, Form, Input, Empty, Button} from 'antd'
 import { SearchOutlined } from "@ant-design/icons"
 import youtubeIcon from "../../images/youtubeIcon.png"
 import discogsIcon from "../../images/discogsIcon.png"
+import loadingGif from "../../images/loading.gif"
 import chroma from 'chroma-js'
 import { getColor } from "../../utils/getColorBasedOnString"
 
@@ -31,6 +32,17 @@ const Number = styled.span`
     background-color: ${props => props.color || '#fff'};
 `
 
+const LoadingScreen = styled.div`
+    width: 150px;
+    transform: translateX(-75px) translateY(-75px);
+`
+
+const Beatles = styled.img`
+    width: 150px;
+    border-radius: 75px;
+    border: 2px solid;
+`
+
 const Songs = () => {
 
     const artistRef = useRef(null)
@@ -39,6 +51,7 @@ const Songs = () => {
     const [songs, setSongs] = useState([])
     const [genres, setGenres] = useState([])
     const [styles, setStyles] = useState([])
+    const [loading, setLoading] = useState(true)
     const [toggleRating, setToggleRating] = useState(false)
     const {user, setCurSong} = useContext(Context)
     const navigate = useNavigate()
@@ -52,6 +65,13 @@ const Songs = () => {
     useEffect(()=>{
         updateSongList()
     },[])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false)
+        }, 250);
+        return () => clearTimeout(timer);
+      }, [songs]);
 
     const mappedGenreFilters = genres.map(g => ({
         text: g,
@@ -78,8 +98,12 @@ const Songs = () => {
         setCurSong(song)
     }
 
-    const locale = {
-        emptyText: <Empty  description="This list is empty..." />
+    const emptyTableScreen = {
+        emptyText: <><br/><br/><br/><br/><br/><Empty  description="This list is empty..." /><br/><br/><br/></>
+    }
+
+    const loadingScreen = {
+        indicator: <LoadingScreen><Beatles src={loadingGif}/>Loading</LoadingScreen>
     }
 
     const columns = [
@@ -219,12 +243,13 @@ const Songs = () => {
                 </Form.Item>
             </Form>
                 <Table
+                    loading={ loading && loadingScreen}
                     rowKey={record => record.id}
                     size="small"
                     pagination={{pageSize:100, hideOnSinglePage:true}}
                     columns={columns}
                     dataSource={songs}
-                    locale={locale}
+                    locale={emptyTableScreen}
                     onRow={(song) => {
                         return {
                         onDoubleClick: () => {song.url && handlePlayButton(song)}
