@@ -12,7 +12,7 @@ import {Edit} from "./sites/dashboard/Edit";
 import {VideoPlayer} from "./components/VideoPlayer";
 
 const Container = styled.div`
-background-color: teal;
+background-color: #222;
 height: 100vh;
 max-width: 1200px;
 margin: 0 auto;

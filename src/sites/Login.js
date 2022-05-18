@@ -9,7 +9,7 @@ import { UploadOutlined } from '@ant-design/icons';
 const Container = styled.div`
 margin: 0;
 padding: 15px;
-background-color: plum;
+background-color: #bfe2fa;
 border-radius: 5px;
 `
 
@@ -62,7 +62,7 @@ const Login = () => {
                 <Form.Item><Button onClick={logUser} type="primary">Login</Button></Form.Item>
                 <Form.Item><Button onClick={createUser}>Create Account</Button></Form.Item>
             </Form>
-            <br/>
+            <hr/>
             <Form
                 layout="inline"
             >

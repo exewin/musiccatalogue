@@ -7,7 +7,7 @@ import {Button} from "antd"
 
 
 const ProfileBox = styled.div`
-background-color: plum;
+background-color: #bfe2fa;
 border-radius: 5px;
 padding: 5px;
 `

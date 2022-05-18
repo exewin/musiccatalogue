@@ -98,7 +98,7 @@ const Edit = () => {
             <Form 
             name="edit"
             initialValues={{ rating: 50 }}
-            labelCol={{span: 3}} wrapperCol={{span: 16}}
+            labelCol={{span: 5}} wrapperCol={{span: 16}}
             form={form}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
@@ -143,7 +143,7 @@ const Edit = () => {
                 </Form.Item>
 
                 <Form.Item label="Styles" name="style" tooltip="Separate multiple styles with commas.">
-                    <Input placeholder="example: Synth-pop"/>
+                    <Input placeholder="example: Electro, Synth-pop"/>
                 </Form.Item>
 
                 <Form.Item 
@@ -160,12 +160,12 @@ const Edit = () => {
                 </Form.Item>
 
                 {!idParam &&
-                    <Form.Item label="Stay on page" tooltip="Check to speed up adding songs.">
+                    <Form.Item label="Stay on page" tooltip="Check to not leave this page after adding song.">
                         <Checkbox checked={stayOnPage} onChange={()=>setStayOnPage(!stayOnPage)}/>
                     </Form.Item>
                 }
 
-                <Form.Item wrapperCol={{offset: 2, span: 3}}>
+                <Form.Item wrapperCol={{offset: 5, span: 5}}>
                     <Button type="primary" htmlType="submit">
                         {idParam ? 'Edit' : 'Add'}
                     </Button>
