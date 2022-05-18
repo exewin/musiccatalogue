@@ -3,7 +3,8 @@ import styled from "styled-components"
 import { Context } from "../../Context"
 import { useNavigate } from "react-router"
 import { databaseGetListInfo, databaseRemoveSong } from "../../database"
-import { Table, Space, Popconfirm, Tag, Switch, Form, Input, Empty, Button} from 'antd'
+import { Table, Space, Popconfirm, Switch, Form, Input, Empty, Button} from 'antd'
+import { Tag } from "../../components/Tag"
 import { SearchOutlined } from "@ant-design/icons"
 import youtubeIcon from "../../images/youtubeIcon.png"
 import discogsIcon from "../../images/discogsIcon.png"
@@ -41,11 +42,6 @@ const Beatles = styled.img`
     width: 150px;
     border-radius: 75px;
     border: 2px solid;
-`
-
-const TagWrapper = styled.span`
-    cursor: pointer;
-    user-select: none;
 `
 
 const Songs = () => {
@@ -216,13 +212,12 @@ const Songs = () => {
         render: (tags) => (
             <span>
                 {
-                tags && tags.map(tag => 
-                    <TagWrapper><Tag 
-                    key={tag} 
-                    color={mappedGenreFilters.find(a=>a.text === tag) ? mappedGenreFilters.find(a=>a.text === tag).color : ""}
-                    onClick={() => filterWithTag(tag, "genres")}
-                > 
-                {tag} </Tag></TagWrapper> )
+                    tags && tags.map((tag, i) => 
+                    <Tag 
+                        key={i}
+                        color={mappedGenreFilters.find(a=>a.text === tag) ? mappedGenreFilters.find(a=>a.text === tag).color : ""}
+                        handleClick={() => filterWithTag(tag, "genres")}
+                    >{tag}</Tag>)
                 } 
             </span>
         ),
@@ -237,12 +232,14 @@ const Songs = () => {
         },
         render: tags => (
             <span>
-                {tags && tags.map(tag => 
-                <TagWrapper><Tag 
-                    key={tag}
-                    color={mappedStyleFilters.find(a=>a.text === tag) ? mappedStyleFilters.find(a=>a.text === tag).color : ""}
-                    onClick={() => filterWithTag(tag, "styles")}
-                > {tag} </Tag></TagWrapper> )} 
+                {
+                    tags && tags.map((tag, i) => 
+                    <Tag 
+                        key={i}
+                        color={mappedStyleFilters.find(a=>a.text === tag) ? mappedStyleFilters.find(a=>a.text === tag).color : ""}
+                        handleClick={() => filterWithTag(tag, "styles")}
+                    >{tag}</Tag>)
+                } 
             </span>
         ),
     },
