@@ -1,5 +1,6 @@
 import {message} from "antd"
 import {nanoid} from "nanoid"
+import {saveAs} from "file-saver"
 
 let database = []
 const DATABASE_LABEL = "music_catalogue_database"
@@ -102,14 +103,13 @@ const databaseCreateUserValidate = (login, password) => {
 export const databaseAddSong = (login, song, id) => {
     database.find(user => {
         if(user.login === login){
-            if(id!=null){
+            if(id){
                 const arr = user.songs.map(concreteSong=> {
                     if(id===concreteSong.id){
                         song.id = id
                         return song
                     }
-                    else return concreteSong
-
+                    return concreteSong
                 })
                 user.songs = arr
                 message.success(`song ${song.title} edited`)
@@ -162,6 +162,19 @@ export const databaseGetListInfo = login => {
         }
     })
     return [songs, genres, styles]
+}
+
+
+export const databaseSaveToFile = () => {
+    const db = JSON.stringify(database)
+    const file = new File([db], "musicCatalogueDatabase.json", {type: "text/plain;charset=utf-8"})
+    saveAs(file)
+}
+
+export const databaseLoadFromFile = text => {
+    const db = JSON.parse(text)
+    database = db
+    databaseSave()
 }
 
 

@@ -10,6 +10,7 @@
     "antd-prompt": "^0.7.1",
     "axios": "^0.27.2",
     "chroma-js": "^2.4.2",
+    "file-saver": "^2.0.5",
     "nanoid": "^3.3.4",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
