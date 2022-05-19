@@ -29,10 +29,9 @@ const Dashboard = () => {
         {
             navigate("/")
         }
-    },[navigate])
+    },[user])
 
     const logout = () => {
-        navigate("/")
         user.set("", false)
     }
 
@@ -41,6 +40,7 @@ const Dashboard = () => {
             <p title={`Hello sir ${user.userData.login}`}>User: <Username>{user.userData.login}</Username> </p>
             <Link to="/dashboard/songs"><Button title="Display full list of songs">List 📜</Button></Link>
             <Link to="/dashboard/edit"><Button title="Add song to list">Add ✏️</Button></Link>
+            <Link to="/dashboard/options"><Button title="Additional functionalities">Options 🔨</Button></Link>
             <Button title="Logout and return to login screen" onClick={logout}>Logout</Button>
             <hr/>
             <Outlet/>
