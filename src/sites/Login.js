@@ -36,6 +36,7 @@ const Login = () => {
             const text = e.target.result
             databaseLoadFromFile(text)
         }
+        reader.readAsText(e.target.files[0])
     }
 
     return(
