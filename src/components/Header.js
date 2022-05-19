@@ -21,7 +21,7 @@ right: 0px;
 margin: 0;
 text-align: right;
 color: #ff4706;
-text-shadow: 1px 1px rgba(0,0,0,0.5);
+text-shadow: 1px 1px rgba(0,0,0,0.7);
 font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 user-select: none;
 `

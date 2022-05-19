@@ -12,8 +12,12 @@ border-radius: 0px 0px 2px 2px;
 padding: 7px;
 `
 
-const GreetingsScreen = styled.div`
-
+const Username = styled.span`
+color:#ff4706;
+font-size: large;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-weight: 500;
+text-shadow: 1px 1px rgba(0,0,0,0.7);
 `
 
 const Dashboard = () => {
@@ -34,7 +38,7 @@ const Dashboard = () => {
 
     return(
         <ProfileBox>
-            <p title={`Hello sir ${user.userData.login}`}>User: {user.userData.login}</p>
+            <p title={`Hello sir ${user.userData.login}`}>User: <Username>{user.userData.login}</Username> </p>
             <Link to="/dashboard/songs"><Button title="Display full list of songs">List 📜</Button></Link>
             <Link to="/dashboard/edit"><Button title="Add song to list">Add ✏️</Button></Link>
             <Button title="Logout and return to login screen" onClick={logout}>Logout</Button>
