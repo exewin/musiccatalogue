@@ -98,29 +98,28 @@ const databaseCreateUserValidate = (login, password) => {
 }
 
 export const databaseAddSong = (login, song, id) => {
-    database.find(user => {
-        if(user.login === login){
-            if(id){
-                const arr = user.songs.map(concreteSong=> {
-                    if(id===concreteSong.id){
-                        song.id = id
-                        return song
-                    }
-                    return concreteSong
-                })
-                user.songs = arr
-                message.success(`song ${song.title} edited`)
-            }
-            else{
-                song.id = nanoid()
-                user.songs.push(song)
-                message.success(`song ${song.title} added`)
-            }
-            databaseAddGenres(user, song.genres)
-            databaseAddStyles(user, song.styles)
-            databaseSave()
+    const user = database.find(u => u.login === login)
+    if(user){
+        if(id){
+            const arr = user.songs.map(concreteSong=> {
+                if(id===concreteSong.id){
+                    song.id = id
+                    return song
+                }
+                return concreteSong
+            })
+            user.songs = arr
+            message.success(`song ${song.title} edited`)
         }
-    })
+        else{
+            song.id = nanoid()
+            user.songs.push(song)
+            message.success(`song ${song.title} added`)
+        }
+        databaseAddGenres(user, song.genres)
+        databaseAddStyles(user, song.styles)
+        databaseSave()
+    }
 }
 
 export const databaseRemoveSong = (login, id) => {
@@ -163,6 +162,29 @@ export const databaseLoadFromFile = text => {
     const db = JSON.parse(text)
     database = db
     databaseSave()
+}
+
+export const databaseClearFilters = (login) => {
+    const user = database.find(u => u.login === login)
+    if(user){
+        let usedStyles = []
+        let usedGenres = []
+        user.songs.forEach(s => {
+            usedGenres = usedGenres.concat(s.genres)
+            usedStyles = usedStyles.concat(s.styles)
+        })
+        const newGenres = [...new Set(usedGenres)]
+        const newStyles = [...new Set(usedStyles)]
+        const operationInfo = {
+            genresResult: user.genres.length - newGenres.length, 
+            stylesResult: user.styles.length - newStyles.length,
+        }
+        user.genres = newGenres
+        user.styles = newStyles
+        databaseSave()
+        return operationInfo
+    }
+    
 }
 
 const databaseAddStyles = (user, styles) => {
