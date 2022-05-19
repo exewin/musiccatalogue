@@ -21,4 +21,18 @@ hr{
   border-top: 1px solid #ff4706;
 }
 
+ul {
+  list-style: none;
+}
+
+ul li::before {
+  content: "\2022"; 
+  color: #ff4706;
+  font-weight: bold;
+  font-size: 18px;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
 @import '~antd/dist/antd.css';
