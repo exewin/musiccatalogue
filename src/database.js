@@ -5,7 +5,6 @@ import {saveAs} from "file-saver"
 let database = []
 const DATABASE_LABEL = "music_catalogue_database"
 
-
 export const databaseLoad = () => {
    const data = localStorage.getItem(DATABASE_LABEL)
    database = JSON.parse(data)
@@ -77,7 +76,6 @@ const findUser = login => {
     }
 }
 
-
 const databaseUserExists = login => {
     if(findUser(login)) {
         return true
@@ -96,7 +94,6 @@ const databaseCreateUserValidate = (login, password) => {
         message.error(`username and password must be at least 3 characters long.`)
         return false
     }
-
     return true
 }
 
@@ -127,43 +124,34 @@ export const databaseAddSong = (login, song, id) => {
 }
 
 export const databaseRemoveSong = (login, id) => {
-    database.find(user => {
-        if(user.login === login)
-        {
-            console.log(id)
-            const arr = user.songs.filter(song => song.id != id)
-            user.songs = arr
-        }
-    })
+    const user = database.find(u => u.login === login)
+    if(user){
+        const arr = user.songs.filter(song => song.id != id)
+        user.songs = arr
+    }
     databaseSave()
 }
 
 export const databaseGetConcreteSong = (login, id) => {
     let song = {}
-    database.find(user => {
-        if(user.login === login)
-        {
-            song = user.songs.find(song => song.id == id)
-        }
-    })
+    const user = database.find(u => u.login === login)
+    if(user)
+        song = user.songs.find(song => song.id === id)
+    
     return song
 }
 
 export const databaseGetListInfo = login => {
-    let songs = []
-    let styles = []
-    let genres = []
-    database.find(user => {
-        if(user.login === login)
-        {
-            songs = user.songs
-            styles = user.styles
-            genres = user.genres
-        }
-    })
-    return [songs, genres, styles]
+    const user = database.find(u => u.login === login)
+    if(user) return [user.songs, user.genres, user.styles]
+    return [[],[],[]]
 }
 
+export const databaseDeleteUser = login => {
+    const filteredDatabase = database.filter(u => u.login != login)
+    database = filteredDatabase
+    databaseSave()
+}
 
 export const databaseSaveToFile = () => {
     const db = JSON.stringify(database)
@@ -176,7 +164,6 @@ export const databaseLoadFromFile = text => {
     database = db
     databaseSave()
 }
-
 
 const databaseAddStyles = (user, styles) => {
     let newStyles = styles.concat(user.styles)
