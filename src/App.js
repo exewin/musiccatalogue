@@ -8,6 +8,7 @@ import {Login} from "./sites/Login"
 import {Dashboard} from "./sites/Dashboard"
 import {PageNotFound} from "./sites/PageNotFound"
 import {Songs} from "./sites/dashboard/Songs"
+import {Greeting} from "./sites/dashboard/Greeting"
 import {Edit} from "./sites/dashboard/Edit"
 import {VideoPlayer} from "./components/VideoPlayer"
 import logoMcat from "./images/logomcat.png"
@@ -39,6 +40,7 @@ function App() {
             <Routes>
               <Route index element={<Login/>}/>
               <Route path="dashboard" element={<Dashboard/>}>
+                <Route exact path="" element={<Greeting/>}/>
                 <Route path="songs" element={<Songs/>}/>
                 <Route path="edit" element={<Edit/>}>
                   <Route path=":artist:title" element={<Edit/>}/>
