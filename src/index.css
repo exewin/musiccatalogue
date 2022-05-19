@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #111;
+  background-image: linear-gradient(to right, #333,#111,#333); 
 }
 
 code {
@@ -15,6 +15,10 @@ code {
 
 p{
   margin: 0
+}
+
+hr{
+  border-top: 1px solid #ff4706;
 }
 
 @import '~antd/dist/antd.css';

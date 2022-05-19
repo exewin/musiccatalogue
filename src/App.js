@@ -1,18 +1,23 @@
 import React, {useEffect} from "react"
 import styled from "styled-components"
-import {Routes, Route, BrowserRouter} from "react-router-dom";
+import {Routes, Route, BrowserRouter} from "react-router-dom"
 import {databaseLoad} from "./database"
-import {ContextProvider} from "./Context";
+import {ContextProvider} from "./Context"
 import {Header} from "./components/Header"
 import {Login} from "./sites/Login"
 import {Dashboard} from "./sites/Dashboard"
-import {PageNotFound} from "./sites/PageNotFound";
-import {Songs} from "./sites/dashboard/Songs";
-import {Edit} from "./sites/dashboard/Edit";
-import {VideoPlayer} from "./components/VideoPlayer";
+import {PageNotFound} from "./sites/PageNotFound"
+import {Songs} from "./sites/dashboard/Songs"
+import {Edit} from "./sites/dashboard/Edit"
+import {VideoPlayer} from "./components/VideoPlayer"
+import logoMcat from "./images/logomcat.png"
 
 const Container = styled.div`
 background-color: #222;
+background-image: url(${props => props.logoMcat});
+background-repeat: no-repeat;
+background-position: center;
+background-size: 10%;
 height: 100vh;
 max-width: 1200px;
 margin: 0 auto;
@@ -28,9 +33,9 @@ function App() {
     <>
     
       <ContextProvider>
-       <Container>
+       <Container logoMcat={logoMcat}>
           <BrowserRouter>
-            <Header/>
+          <Header/>
             <Routes>
               <Route index element={<Login/>}/>
               <Route path="dashboard" element={<Dashboard/>}>

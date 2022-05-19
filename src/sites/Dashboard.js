@@ -7,9 +7,13 @@ import {Button} from "antd"
 
 
 const ProfileBox = styled.div`
-background-color: #bfe2fa;
-border-radius: 5px;
-padding: 5px;
+background-color: #afb2ca;
+border-radius: 0px 0px 2px 2px;
+padding: 7px;
+`
+
+const GreetingsScreen = styled.div`
+
 `
 
 const Dashboard = () => {

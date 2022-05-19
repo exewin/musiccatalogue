@@ -9,8 +9,8 @@ import { UploadOutlined } from '@ant-design/icons';
 const Container = styled.div`
 margin: 0;
 padding: 15px;
-background-color: #bfe2fa;
-border-radius: 5px;
+background-color: #afb2ca;
+border-radius: 0px 0px 2px 2px;
 `
 
 const Login = () => {
