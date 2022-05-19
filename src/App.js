@@ -9,6 +9,7 @@ import {Dashboard} from "./sites/Dashboard"
 import {PageNotFound} from "./sites/PageNotFound"
 import {Songs} from "./sites/dashboard/Songs"
 import {Greeting} from "./sites/dashboard/Greeting"
+import {Options} from "./sites/dashboard/Options"
 import {Edit} from "./sites/dashboard/Edit"
 import {VideoPlayer} from "./components/VideoPlayer"
 import logoMcat from "./images/logomcat.png"
@@ -45,6 +46,7 @@ function App() {
                 <Route path="edit" element={<Edit/>}>
                   <Route path=":artist:title" element={<Edit/>}/>
                 </Route>
+                <Route path="options" element={<Options/>}/>
                 <Route path="*" element={<PageNotFound/>}/>
               </Route>
 
