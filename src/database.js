@@ -167,7 +167,7 @@ export const databaseGetListInfo = login => {
 
 export const databaseSaveToFile = () => {
     const db = JSON.stringify(database)
-    const file = new File([db], "musicCatalogueDatabase.json", {type: "text/plain;charset=utf-8"})
+    const file = new File([db], `musicCatalogueDatabase-${Date.now()}.json`, {type: "text/plain;charset=utf-8"})
     saveAs(file)
 }
 
