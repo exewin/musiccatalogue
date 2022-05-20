@@ -31,6 +31,7 @@ const Number = styled.span`
     border-radius: 5px;
     color:white;
     background-color: ${props => props.color || '#fff'};
+    cursor: default;
 `
 
 const LoadingScreen = styled.div`
@@ -42,6 +43,17 @@ const Beatles = styled.img`
     width: 150px;
     border-radius: 75px;
     border: 2px solid;
+`
+
+const FilterDropdown = styled.div`
+    text-align: center;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 300px;
+    row-gap: 3px;
+    width: 120px;
+    display: flex;
+    flex-direction: column;
 `
 
 const Songs = () => {
@@ -67,6 +79,8 @@ const Songs = () => {
 
     const sortedInfo = tableInfo.sortedInfo || {};
     const filteredInfo = tableInfo.filteredInfo || {};
+
+    console.log(filteredInfo)
 
     useEffect(()=>{
         updateSongList()
@@ -141,7 +155,7 @@ const Songs = () => {
     {
         title: 'Artist', dataIndex: 'artist', key: 'artist',
         showSorterTooltip: false,
-        sortOrder: sortedInfo.columnKey === 'artist' && sortedInfo.order || null,
+        sortOrder: sortedInfo.columnKey === 'artist' ? sortedInfo.order : null,
         sorter: (a, b) => a.artist > b.artist ? 1 : -1,
         filteredValue: filteredInfo.artist || null,
         onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => artistRef.current.focus(), 25),
@@ -171,7 +185,7 @@ const Songs = () => {
     {
         title: 'Title', dataIndex: 'title', key: 'title',
         showSorterTooltip: false,
-        sortOrder: sortedInfo.columnKey === 'title' && sortedInfo.order || null,
+        sortOrder: sortedInfo.columnKey === 'title' ? sortedInfo.order : null,
         sorter: (a, b) => a.title > b.title ? 1 : -1,
         filteredValue: filteredInfo.title || null,
         onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => titleRef.current.focus(), 25),
@@ -199,25 +213,47 @@ const Songs = () => {
     },
     {
         title: 'Year', dataIndex: 'year', key: 'year',
-        sortOrder: sortedInfo.columnKey === 'year' && sortedInfo.order || null,
+        sortOrder: sortedInfo.columnKey === 'year' ? sortedInfo.order : null,
         showSorterTooltip: false,
         sorter: (a, b) => a.year - b.year,
         render: (td) => <Number color={yearScale(td)}>{td}</Number> ,
     },
     {
-        title: 'Genres',
-        dataIndex: 'genres',
+        title: `Genres`, dataIndex: 'genres', key: 'genres',
         filterMultiple: false,
         filters: mappedGenreFilters,
         filteredValue: filteredInfo.genres || null,
         onFilter: (value, record) => {
             return record.genres ? record.genres.indexOf(value) >= 0 : 0
         },
+        filterDropdown: ({confirm, clearFilters, filters}) => {
+            return(
+                <div style={{textAlign:"center"}}>
+                    <FilterDropdown>
+                        {filters.sort((a, b) => a.text > b.text ? 1 : -1).map((f, i)=><Tag 
+                            key={i}
+                            selected={filteredInfo.genres && filteredInfo.genres[0] === f.text ? true : false}
+                            color={mappedGenreFilters.find(a=>a.text === f.text) ? mappedGenreFilters.find(a=>a.text === f.text).color : ""}
+                            handleClick={() => {
+                                filterWithTag(f.value, "genres") 
+                                confirm()
+                            }}
+                        >{f.text}</Tag>)}
+                    </FilterDropdown>
+                    <Button style={{margin:"3px 0px"}} size="small" onClick={()=>{
+                        clearFilters()
+                        confirm()
+                    }}
+                    >Clear filter</Button>
+                </div>
+            )
+        },
         render: (tags) => (
             <span>
                 {
                     tags && tags.map((tag, i) => 
                     <Tag 
+                        selected={filteredInfo.genres && filteredInfo.genres[0] === tag ? true : false}
                         key={i}
                         color={mappedGenreFilters.find(a=>a.text === tag) ? mappedGenreFilters.find(a=>a.text === tag).color : ""}
                         handleClick={() => filterWithTag(tag, "genres")}
@@ -227,19 +263,42 @@ const Songs = () => {
         ),
     },
     {
-        title: 'Styles', dataIndex: 'styles', key: 'styles',
+        title: `Styles`, dataIndex: 'styles', key: 'styles',
         filterMultiple: false,
         filters: mappedStyleFilters,
         filteredValue: filteredInfo.styles || null,
         onFilter: (value, record) => {
             return record.styles ? record.styles.indexOf(value) >= 0 : 0
         },
+        filterDropdown: ({confirm, clearFilters, filters}) => {
+            return(
+                <div style={{textAlign:"center"}}>
+                    <FilterDropdown>
+                        {filters.sort((a, b) => a.text > b.text ? 1 : -1).map((f, i)=><Tag 
+                            key={i}
+                            selected={filteredInfo.styles && filteredInfo.styles[0] === f.text ? true : false}
+                            color={mappedStyleFilters.find(a=>a.text === f.text) ? mappedStyleFilters.find(a=>a.text === f.text).color : ""}
+                            handleClick={() => {
+                                filterWithTag(f.value, "styles") 
+                                confirm()
+                            }}
+                        >{f.text}</Tag>)}
+                    </FilterDropdown>
+                    <Button style={{margin:"3px 0px"}} size="small" onClick={()=>{
+                        clearFilters()
+                        confirm()
+                    }}
+                    >Clear filter</Button>
+                </div>
+            )
+        },
         render: tags => (
             <span>
                 {
                     tags && tags.map((tag, i) => 
-                    <Tag 
+                    <Tag
                         key={i}
+                        selected={filteredInfo.styles && filteredInfo.styles[0] === tag ? true : false}
                         color={mappedStyleFilters.find(a=>a.text === tag) ? mappedStyleFilters.find(a=>a.text === tag).color : ""}
                         handleClick={() => filterWithTag(tag, "styles")}
                     >{tag}</Tag>)
@@ -251,7 +310,7 @@ const Songs = () => {
         title: 'Rating', dataIndex: 'rating', key: 'rating',
         width: 25,
         align: 'center',
-        sortOrder: sortedInfo.columnKey === 'rating' && sortedInfo.order || null,
+        sortOrder: sortedInfo.columnKey === 'rating' ? sortedInfo.order : null,
         hidden: toggleRating,
         showSorterTooltip: false,
         sorter: (a, b) => a.rating - b.rating,
