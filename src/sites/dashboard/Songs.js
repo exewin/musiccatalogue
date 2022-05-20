@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react"
-import styled from "styled-components"
+import styled, {keyframes} from "styled-components"
 import { Context } from "../../Context"
 import { useNavigate } from "react-router"
 import { databaseGetListInfo, databaseRemoveSong } from "../../database"
@@ -56,6 +56,28 @@ const FilterDropdown = styled.div`
     flex-direction: column;
 `
 
+const anima = keyframes`
+  0% {
+    transform: scale(1.6 , 0.5);
+  }
+  30% {
+    transform: scale(1.55 , 0.55);
+  }
+  70% {
+    transform: scale(0.84 , 1.26);
+  }
+  100% {
+    transform: scale(0.8 , 1.3);
+  }
+`
+
+const Pulse = styled.div`
+    animation: ${anima} 0.3s alternate infinite;
+    text-align: center;
+`
+
+
+
 const Songs = () => {
 
     const artistRef = useRef(null)
@@ -68,7 +90,7 @@ const Songs = () => {
     const [tableInfo, setTableInfo] = useState({filteredInfo: null, sortedInfo: defaultSort})
     const [loading, setLoading] = useState(true)
     const [toggleRating, setToggleRating] = useState(false)
-    const {user, setCurSong} = useContext(Context)
+    const {user, curSong, setCurSong} = useContext(Context)
     const navigate = useNavigate()
     const updateSongList = () =>{
         const [dbsongs, dbgenres, dbstyles] = databaseGetListInfo(user.userData.login)
@@ -79,8 +101,6 @@ const Songs = () => {
 
     const sortedInfo = tableInfo.sortedInfo || {};
     const filteredInfo = tableInfo.filteredInfo || {};
-
-    console.log(filteredInfo)
 
     useEffect(()=>{
         updateSongList()
@@ -321,7 +341,7 @@ const Songs = () => {
         align: "right",
         render: (song) => (
             <Space>
-            {song.url && <a onClick={()=>handlePlayButton(song)} title="Play song">🎵</a>}
+            {song.url && <a onClick={()=>handlePlayButton(song)} title="Play song">{song.url === curSong.url ? <Pulse>🎵</Pulse> : '🎵'}</a>}
             {song.url && <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube"><Img src={youtubeIcon}/></a>}
             {song.discogsUrl && <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" title="Open on Discogs"><Img src={discogsIcon}/></a>}
             <a onClick={()=>handleEditButton(song.id)} title="Edit song details">🔧</a>
