@@ -8,9 +8,10 @@ const ColorfulBox = styled.div`
     margin: 0px 3px;
     padding: 2px 3px;
     border-radius: 3px;
-    min-height: 10px;
+    min-height: 24px;
     max-inline-size: 150px;
-    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     display:inline-block;
     overflow: hidden;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
