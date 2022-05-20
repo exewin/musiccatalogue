@@ -52,7 +52,8 @@ const Songs = () => {
     const [songs, setSongs] = useState([])
     const [genres, setGenres] = useState([])
     const [styles, setStyles] = useState([])
-    const [tableInfo, setTableInfo] = useState({filteredInfo: null, sortedInfo: null})
+    const defaultSort = {order: "descend", field: "rating", columnKey: "rating"}
+    const [tableInfo, setTableInfo] = useState({filteredInfo: null, sortedInfo: defaultSort})
     const [loading, setLoading] = useState(true)
     const [toggleRating, setToggleRating] = useState(false)
     const {user, setCurSong} = useContext(Context)
@@ -140,8 +141,9 @@ const Songs = () => {
     {
         title: 'Artist', dataIndex: 'artist', key: 'artist',
         showSorterTooltip: false,
-        filteredValue: filteredInfo.artist || null,
+        sortOrder: sortedInfo.columnKey === 'artist' && sortedInfo.order || null,
         sorter: (a, b) => a.artist > b.artist ? 1 : -1,
+        filteredValue: filteredInfo.artist || null,
         onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => artistRef.current.focus(), 25),
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
             return( 
@@ -169,8 +171,9 @@ const Songs = () => {
     {
         title: 'Title', dataIndex: 'title', key: 'title',
         showSorterTooltip: false,
-        filteredValue: filteredInfo.title || null,
+        sortOrder: sortedInfo.columnKey === 'title' && sortedInfo.order || null,
         sorter: (a, b) => a.title > b.title ? 1 : -1,
+        filteredValue: filteredInfo.title || null,
         onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => titleRef.current.focus(), 25),
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
             return( 
@@ -196,6 +199,7 @@ const Songs = () => {
     },
     {
         title: 'Year', dataIndex: 'year', key: 'year',
+        sortOrder: sortedInfo.columnKey === 'year' && sortedInfo.order || null,
         showSorterTooltip: false,
         sorter: (a, b) => a.year - b.year,
         render: (td) => <Number color={yearScale(td)}>{td}</Number> ,
@@ -247,6 +251,7 @@ const Songs = () => {
         title: 'Rating', dataIndex: 'rating', key: 'rating',
         width: 25,
         align: 'center',
+        sortOrder: sortedInfo.columnKey === 'rating' && sortedInfo.order || null,
         hidden: toggleRating,
         showSorterTooltip: false,
         sorter: (a, b) => a.rating - b.rating,
