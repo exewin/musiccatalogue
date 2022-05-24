@@ -1,6 +1,7 @@
 import {message} from "antd"
 import {nanoid} from "nanoid"
 import {saveAs} from "file-saver"
+import {createDefaultOptions} from "./utils/createDefaultOptions"
 
 let database = []
 const DATABASE_LABEL = "music_catalogue_database"
@@ -25,6 +26,7 @@ export const databaseCreateUser = (login, password) => {
             songs:[],
             genres:[],
             styles:[],
+            options:createDefaultOptions(),
         })
     databaseSave()
     message.success(`account ${login} created!`, 1)
@@ -142,8 +144,15 @@ export const databaseGetConcreteSong = (login, id) => {
 
 export const databaseGetListInfo = login => {
     const user = database.find(u => u.login === login)
-    if(user) return [user.songs, user.genres, user.styles]
-    return [[],[],[]]
+    if(user) 
+        return [user.songs, user.genres, user.styles, user.hasOwnProperty("options") ? user.options : createDefaultOptions()]
+    return [[],[],[],{}]
+}
+
+export const databaseSetOptions = (login, options) => {
+    const user = database.find(u => u.login === login)
+    if(user)
+        user.options = options
 }
 
 export const databaseDeleteUser = login => {

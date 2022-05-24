@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useState, useRef } from "react"
 import styled, {keyframes} from "styled-components"
 import { Context } from "../../Context"
 import { useNavigate } from "react-router"
-import { databaseGetListInfo, databaseRemoveSong } from "../../database"
+import { databaseGetListInfo, databaseRemoveSong, databaseSetOptions } from "../../database"
 import { Table, Space, Popconfirm, Switch, Form, Input, Empty, Button} from 'antd'
 import { Tag } from "../../components/Tag"
 import { SearchOutlined } from "@ant-design/icons"
 import youtubeIcon from "../../images/youtubeIcon.png"
 import discogsIcon from "../../images/discogsIcon.png"
 import chroma from 'chroma-js'
+import { createDefaultOptions } from "../../utils/createDefaultOptions"
 import { getColor } from "../../utils/getColorBasedOnString"
 
 const ratingScale = chroma.scale(['red', 'orange', 'gold',"green", 'teal', 'purple']).domain([1,40,64,80,90,100,100])
@@ -31,17 +32,6 @@ const Number = styled.span`
     color:white;
     background-color: ${props => props.color || '#fff'};
     cursor: default;
-`
-
-const LoadingScreen = styled.div`
-    width: 150px;
-    transform: translateX(-75px) translateY(-75px);
-`
-
-const Beatles = styled.img`
-    width: 150px;
-    border-radius: 75px;
-    border: 2px solid;
 `
 
 const FilterDropdown = styled.div`
@@ -75,8 +65,6 @@ const Pulse = styled.div`
     text-align: center;
 `
 
-
-
 const Songs = () => {
 
     const artistRef = useRef(null)
@@ -85,32 +73,39 @@ const Songs = () => {
     const [songs, setSongs] = useState([])
     const [genres, setGenres] = useState([])
     const [styles, setStyles] = useState([])
-    const defaultSort = {order: "descend", field: "rating", columnKey: "rating"}
-    const [tableInfo, setTableInfo] = useState({filteredInfo: null, sortedInfo: defaultSort})
+    const [tableInfo, setTableInfo] = useState({})
     const [loading, setLoading] = useState(true)
-    const [toggleRating, setToggleRating] = useState(false)
     const {user, curSong, setCurSong} = useContext(Context)
     const navigate = useNavigate()
-    const updateSongList = () =>{
-        const [dbsongs, dbgenres, dbstyles] = databaseGetListInfo(user.userData.login)
+    const updateSongList = () => {
+        const [dbsongs, dbgenres, dbstyles, dboptions] = databaseGetListInfo(user.userData.login)
         setSongs(dbsongs)
         setStyles(dbstyles)
         setGenres(dbgenres)
+        setTableInfo(dboptions)
     }
-
-    const sortedInfo = tableInfo.sortedInfo || {};
-    const filteredInfo = tableInfo.filteredInfo || {};
-
+    
     useEffect(()=>{
         updateSongList()
     },[])
 
+    useEffect(()=>{
+        if(tableInfo.hasOwnProperty("sortedInfo"))
+            databaseSetOptions(user.userData.login, tableInfo)
+    },[tableInfo])
+
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false)
-        }, 250);
-        return () => clearTimeout(timer);
-      }, [songs]);
+        if(loading){
+            const timer = setTimeout(() => {
+                setLoading(false)
+            }, 250)
+            return () => clearTimeout(timer)
+        }
+    }, [loading])
+
+    const sortedInfo = tableInfo.sortedInfo || {}
+    const filteredInfo = tableInfo.filteredInfo || {}
+    const hiddenInfo = tableInfo.hidden || {rating:false}
 
     const mappedGenreFilters = genres.map(g => ({
         text: g,
@@ -136,24 +131,33 @@ const Songs = () => {
     const handlePlayButton = song => {
         setCurSong(song)
     }
+
+    const handleTable = info => {
+        setLoading(true)
+        setTableInfo(info)
+    }
     
     const handleTableChange = (pagination, filters, sorter) => {
-        console.log(filters, sorter)
-        setTableInfo({
+        handleTable({
+            ...tableInfo,
             filteredInfo: filters,
             sortedInfo: sorter,
         })
     }
 
     const clearFilters = () => {
-        setTableInfo({
+        handleTable({
             ...tableInfo,
             filteredInfo: null,
         })
     }
 
+    const clearAllOptions = () => {
+        handleTable(createDefaultOptions())
+    }
+
     const filterWithTag = (tag, column) => {
-        setTableInfo({
+        handleTable({
             ...tableInfo,
             filteredInfo: {
                 ...filteredInfo,
@@ -162,8 +166,14 @@ const Songs = () => {
         })
     }
 
-    const emptyTableScreen = {
-        emptyText: <><br/><br/><br/><br/><br/><Empty  description="This list is empty..." /><br/><br/><br/></>
+    const toggleColumn = (column, toggle) => {
+        handleTable({
+            ...tableInfo,
+            hidden: {
+                ...tableInfo.hidden,
+                [column] : toggle
+            },
+        })
     }
 
     const emptyTableScreen = {
@@ -284,6 +294,7 @@ const Songs = () => {
     {
         title: `Styles`, dataIndex: 'styles', key: 'styles',
         filterMultiple: false,
+        hidden: hiddenInfo.styles,
         filters: mappedStyleFilters,
         filteredValue: filteredInfo.styles || null,
         onFilter: (value, record) => {
@@ -330,7 +341,7 @@ const Songs = () => {
         width: 25,
         align: 'center',
         sortOrder: sortedInfo.columnKey === 'rating' ? sortedInfo.order : null,
-        hidden: toggleRating,
+        hidden: hiddenInfo.rating,
         showSorterTooltip: false,
         sorter: (a, b) => a.rating - b.rating,
         render: (td) => <Number color={ratingScale(td)}>{td}</Number> ,
@@ -340,7 +351,7 @@ const Songs = () => {
         align: "right",
         render: (song) => (
             <Space>
-            {song.url && <a onClick={()=>handlePlayButton(song)} title="Play song">{song.url === curSong.url ? <Pulse>🎵</Pulse> : '🎵'}</a>}
+            {song.url && <a onClick={()=>handlePlayButton(song)} title="Play song">{curSong && song.url === curSong.url ? <Pulse>🎵</Pulse> : '🎵'}</a>}
             {song.url && <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube"><Img src={youtubeIcon}/></a>}
             {song.discogsUrl && <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" title="Open on Discogs"><Img src={discogsIcon}/></a>}
             <a onClick={()=>handleEditButton(song.id)} title="Edit song details">🔧</a>
@@ -360,10 +371,16 @@ const Songs = () => {
         <Container>
             <Form layout="inline" style={{ marginBottom: 5 }}>
                 <Form.Item label="Hide ratings">
-                    <Switch checked={toggleRating} onChange={()=>setToggleRating(!toggleRating)}/>
+                    <Switch checked={hiddenInfo.rating} onChange={(e)=>toggleColumn("rating", e)}/>
+                </Form.Item>
+                <Form.Item label="Hide styles">
+                    <Switch checked={hiddenInfo.styles} onChange={(e)=>toggleColumn("styles", e)}/>
                 </Form.Item>
                 <Form.Item>
-                <Button onClick={clearFilters}>Clear filters</Button>
+                    <Button onClick={clearFilters}>Clear filters</Button>
+                </Form.Item>
+                <Form.Item>
+                    <Button onClick={clearAllOptions}>Clear all options</Button>
                 </Form.Item>
             </Form>
                 <Table
