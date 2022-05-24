@@ -8,7 +8,6 @@ import { Tag } from "../../components/Tag"
 import { SearchOutlined } from "@ant-design/icons"
 import youtubeIcon from "../../images/youtubeIcon.png"
 import discogsIcon from "../../images/discogsIcon.png"
-import loadingGif from "../../images/loading.gif"
 import chroma from 'chroma-js'
 import { getColor } from "../../utils/getColorBasedOnString"
 
@@ -167,8 +166,8 @@ const Songs = () => {
         emptyText: <><br/><br/><br/><br/><br/><Empty  description="This list is empty..." /><br/><br/><br/></>
     }
 
-    const loadingScreen = {
-        indicator: <LoadingScreen><Beatles src={loadingGif}/>Loading</LoadingScreen>
+    const emptyTableScreen = {
+        emptyText: <><br/><br/><br/><br/><br/><Empty  description="This list is empty..." /><br/><br/><br/></>
     }
 
     const columns = [
@@ -369,7 +368,7 @@ const Songs = () => {
             </Form>
                 <Table
                     onChange={handleTableChange}
-                    loading={loading && loadingScreen}
+                    loading={loading}
                     locale={emptyTableScreen}
                     rowKey={record => record.id}
                     size="small"
