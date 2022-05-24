@@ -390,7 +390,7 @@ const Songs = () => {
                     locale={emptyTableScreen}
                     rowKey={record => record.id}
                     size="small"
-                    pagination={{pageSize:100, hideOnSinglePage:true}}
+                    pagination={{pageSize:9999, hideOnSinglePage:true}}
                     columns={columns}
                     dataSource={songs}
                     onRow={(song) => {
