@@ -133,7 +133,6 @@ const Songs = () => {
     }
 
     const handleTable = info => {
-        setLoading(true)
         setTableInfo(info)
     }
     
