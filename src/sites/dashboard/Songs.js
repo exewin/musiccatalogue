@@ -30,6 +30,8 @@ const Number = styled.span`
     padding: 5px;
     border-radius: 5px;
     color:white;
+    text-shadow: 1px 1px #666;
+    box-shadow: 2px 2px #888;
     background-color: ${props => props.color || '#fff'};
     cursor: default;
 `
