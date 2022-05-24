@@ -21,11 +21,11 @@ hr{
   border-top: 1px solid #ff4706;
 }
 
-ul {
+.greetingList {
   list-style: none;
 }
 
-ul li::before {
+.greetingList li::before {
   content: "\2022"; 
   color: #ff4706;
   font-weight: bold;

@@ -17,7 +17,7 @@ export const Greeting = () => {
                 about your favourite songs and display it with detailed information in a table. Additional
                 functionalities, MCAT provides are:
             </p>
-            <ul>
+            <ul className="greetingList">
                 <li>Sort table by artist, title, year or rating</li>
                 <li>Filter table by genre or style</li>
                 <li>Find song by title or artist</li>
