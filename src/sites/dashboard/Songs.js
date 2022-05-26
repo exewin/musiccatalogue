@@ -19,6 +19,7 @@ const Container = styled.div`
     border: 1px solid gray;
     padding: 5px;
     background-color: white;
+    margin-bottom: 25px;
 `
 
 const Img = styled.img`
@@ -405,7 +406,6 @@ const Songs = () => {
                         }
                     }}
                 />
-            
         </Container>
         )
 }

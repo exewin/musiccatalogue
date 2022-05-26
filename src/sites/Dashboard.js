@@ -4,6 +4,7 @@ import {Context} from "../Context"
 import {useNavigate} from "react-router-dom";
 import {Link, Outlet} from "react-router-dom";
 import {Button} from "antd"
+import { ScrollToTop } from "../components/ScrollToTop";
 
 
 const ProfileBox = styled.div`
@@ -44,6 +45,7 @@ const Dashboard = () => {
             <Button title="Logout and return to login screen" onClick={logout}>Logout</Button>
             <hr/>
             <Outlet/>
+            <ScrollToTop/>
         </ProfileBox>
         
         )
