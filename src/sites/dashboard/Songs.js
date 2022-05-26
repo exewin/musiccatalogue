@@ -62,23 +62,9 @@ const FilterDropdown = styled.div`
     flex-direction: column;
 `
 
-const anima = keyframes`
-  0% {
-    transform: scale(1.6 , 0.6);
-  }
-  30% {
-    transform: scale(1.55 , 0.65);
-  }
-  70% {
-    transform: scale(0.84 , 1.16);
-  }
-  100% {
-    transform: scale(0.8 , 1.2);
-  }
-`
 
 const Pulse = styled.div`
-    animation: ${anima} 0.25s alternate infinite;
+    color:#ff4706;
     text-align: center;
 `
 
@@ -195,6 +181,8 @@ export const Songs = () => {
             },
         })
     }
+
+    const iconSize = "lg"
 
     const emptyTableScreen = {
         emptyText: <Margin><Empty description="This list is empty..." /></Margin>
@@ -390,19 +378,30 @@ export const Songs = () => {
             {
                 song.url && 
                 <a onClick={()=>handlePlayButton(song)} title="Play song">
-                    {curSong && song.url === curSong.url ? <Pulse><FontAwesomeIcon icon={faMusic} /></Pulse> : <FontAwesomeIcon icon={faMusic} />}
+                    {curSong && song.url === curSong.url ? <Pulse><FontAwesomeIcon icon={faMusic} size={iconSize}/></Pulse> : <FontAwesomeIcon icon={faMusic} size={iconSize}/>}
                 </a>
             }
             
-            {song.url && <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a>}
-            {song.discogsUrl && <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" title="Open on Discogs"><FontAwesomeIcon icon={faRecordVinyl} /></a>}
-            <a onClick={()=>handleEditButton(song.id)} title="Edit song details"><FontAwesomeIcon icon={faPencil} /></a>
+            {
+                song.url &&
+                <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube">
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} size={iconSize}/>
+                </a>
+            }
+
+            {
+                song.discogsUrl &&
+                <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" title="Open on Discogs">
+                    <FontAwesomeIcon icon={faRecordVinyl} size={iconSize} />
+                </a>
+            }
+            <a onClick={()=>handleEditButton(song.id)} title="Edit song details"><FontAwesomeIcon icon={faPencil} size={iconSize}/></a>
             <Popconfirm
                 title="Remove this song?"
                 onConfirm={()=>handleRemoveButton(song.id)}
                 okText="Yes"
                 cancelText="No"
-            ><a title="Delete song"><FontAwesomeIcon icon={faTrashCan} /></a>
+            ><a title="Delete song"><FontAwesomeIcon icon={faTrashCan} size={iconSize}/></a>
             </Popconfirm>
             </Space>
         ),
