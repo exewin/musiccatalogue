@@ -190,12 +190,10 @@ const Songs = () => {
         emptyText: <><br/><br/><br/><br/><br/><Empty  description="This list is empty..." /><br/><br/><br/></>
     }
 
-    let index = 0;
-
     const columns = [
     {
         title:"#",
-        render: () => <Index>{++index/2}</Index>
+        render: (_, __, i) => <Index>{i+1}</Index>
     },
     {
         title: 'Artist', dataIndex: 'artist', key: 'artist',
