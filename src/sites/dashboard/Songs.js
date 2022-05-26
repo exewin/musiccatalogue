@@ -162,6 +162,10 @@ const Songs = () => {
         handleTable(createDefaultOptions())
     }
 
+    const playRandomSong = () => {
+        handlePlayButton(songs[Math.floor(Math.random() * songs.length)])
+    }
+
     const filterWithTag = (tag, column) => {
         handleTable({
             ...tableInfo,
@@ -394,6 +398,11 @@ const Songs = () => {
                 <Form.Item>
                     <Button onClick={clearAllOptions}>Clear all options</Button>
                 </Form.Item>
+                {songs.length > 0 &&
+                    <Form.Item>
+                        <Button title="Warning, it may pick song with no url" onClick={playRandomSong}>Play random song</Button>
+                    </Form.Item>
+                }
             </Form>
                 <Table
                     onChange={handleTableChange}
