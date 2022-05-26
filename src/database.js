@@ -17,7 +17,9 @@ const databaseSave = () => localStorage.setItem(DATABASE_LABEL, JSON.stringify(d
 export const databaseCreateUser = (login, password) => {
     if(!createUserValidate(login, password))
         return
-    if(!userExists(login)){
+    
+    const user = findUser(login)    
+    if(!user){
         database.push({
             login, 
             password, 
@@ -26,8 +28,8 @@ export const databaseCreateUser = (login, password) => {
             styles:[],
             options:createDefaultOptions(),
         })
-    databaseSave()
-    message.success(`account ${login} created!`, 1)
+        databaseSave()
+        message.success(`account ${login} created!`, 1)
     } else
         message.error(`${login} is taken!`)
 }
@@ -39,19 +41,17 @@ export const databaseClear = () => {
 }
 
 export const databaseLogin = (login, password) => {
-    if(!userExists(login)){
+    const user = findUser(login)
+    if(!user){
         message.error(`user ${login} not found`)
     }
     else{
-        const user = findUser(login)
-        if(user){
-            if(user.password === password){
-                message.success(`Welcome ${login}!`, 1)
-                return true
-            }
-            else
-                message.error(`wrong password`)
+        if(user.password === password){
+            message.success(`Welcome ${login}!`, 1)
+            return true
         }
+        else
+            message.error(`wrong password`)
     }
     return false
 }
@@ -167,13 +167,6 @@ const databaseAddGenres = (user, genres) => {
 const findUser = login => {
     if(database && database.length > 0)
         return database.find(user => user.login === login)
-    else
-        return false
-}
-
-const userExists = login => {
-    if(findUser(login)) 
-        return true
     else
         return false
 }
