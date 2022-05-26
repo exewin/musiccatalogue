@@ -9,17 +9,14 @@ const DATABASE_LABEL = "music_catalogue_database"
 export const databaseLoad = () => {
    const data = localStorage.getItem(DATABASE_LABEL)
    database = JSON.parse(data)
-   //databaseDisplay()
 }
 
-const databaseSave = () => {
-    localStorage.setItem(DATABASE_LABEL, JSON.stringify(database))
-}
+const databaseSave = () => localStorage.setItem(DATABASE_LABEL, JSON.stringify(database))
 
 export const databaseCreateUser = (login, password) => {
-    if(!databaseCreateUserValidate(login, password))
+    if(!createUserValidate(login, password))
         return
-    if(!databaseUserExists(login)){
+    if(!userExists(login)){
         database.push({
             login, 
             password, 
@@ -41,66 +38,29 @@ export const databaseClear = () => {
 }
 
 export const databaseLogin = (login, password) => {
-    let success = false
-    if(!databaseUserExists(login))
+    if(!userExists(login))
     {
         message.error(`user ${login} not found`)
-        return
     }
     else
     {
-        database.find(user => {
-            if(user.login === login)
+        const user = findUser(login)
+        if(user)
+        {
+            if(user.password === password)
             {
-                if(user.password === password)
-                {
-                    message.success(`Welcome ${login}!`, 1)
-                    success = true
-                    return
-                }
-                else 
-                {
-                    message.error(`wrong password`)
-                    return
-                }
+                message.success(`Welcome ${login}!`, 1)
+                return true
             }
-        })
+            else 
+                message.error(`wrong password`)
+        }
     }
-    return success
-}
-
-const findUser = login => {
-    if(database.length > 0){
-        return database.find(user => user.login === login)
-    }
-    else{
-        return false
-    }
-}
-
-const databaseUserExists = login => {
-    if(findUser(login)) {
-        return true
-    }
-    else {
-        return false
-    }
-}
-
-const databaseDisplay = () => {
-    console.log(database)
-}
-
-const databaseCreateUserValidate = (login, password) => {
-    if(login.length < 3 || password.length < 3) {
-        message.error(`username and password must be at least 3 characters long.`)
-        return false
-    }
-    return true
+    return false
 }
 
 export const databaseAddSong = (login, song, id) => {
-    const user = database.find(u => u.login === login)
+    const user = findUser(login)
     if(user){
         if(id){
             const arr = user.songs.map(concreteSong=> {
@@ -125,7 +85,7 @@ export const databaseAddSong = (login, song, id) => {
 }
 
 export const databaseRemoveSong = (login, id) => {
-    const user = database.find(u => u.login === login)
+    const user = findUser(login)
     if(user){
         const arr = user.songs.filter(song => song.id != id)
         user.songs = arr
@@ -135,7 +95,7 @@ export const databaseRemoveSong = (login, id) => {
 
 export const databaseGetConcreteSong = (login, id) => {
     let song = {}
-    const user = database.find(u => u.login === login)
+    const user = findUser(login)
     if(user)
         song = user.songs.find(song => song.id === id)
     
@@ -143,14 +103,14 @@ export const databaseGetConcreteSong = (login, id) => {
 }
 
 export const databaseGetListInfo = login => {
-    const user = database.find(u => u.login === login)
+    const user = findUser(login)
     if(user) 
         return [user.songs, user.genres, user.styles, user.hasOwnProperty("options") ? user.options : createDefaultOptions()]
     return [[],[],[],{}]
 }
 
 export const databaseSetOptions = (login, options) => {
-    const user = database.find(u => u.login === login)
+    const user = findUser(login)
     if(user)
         user.options = options
 }
@@ -174,7 +134,7 @@ export const databaseLoadFromFile = text => {
 }
 
 export const databaseClearFilters = (login) => {
-    const user = database.find(u => u.login === login)
+    const user = findUser(login)
     if(user){
         let usedStyles = []
         let usedGenres = []
@@ -206,4 +166,26 @@ const databaseAddGenres = (user, genres) => {
     let newgenres = genres.concat(user.genres)
     let removeDuplicates = [...new Set(newgenres)]
     user.genres = removeDuplicates
+}
+
+const findUser = login => {
+    if(database.length > 0)
+        return database.find(user => user.login === login)
+    else
+        return false
+}
+
+const userExists = login => {
+    if(findUser(login)) 
+        return true
+    else
+        return false
+}
+
+const createUserValidate = (login, password) => {
+    if(login.length < 3 || password.length < 3) {
+        message.error(`username and password must be at least 3 characters long.`)
+        return false
+    }
+    return true
 }
