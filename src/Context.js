@@ -14,10 +14,12 @@ const ContextProvider = ({children}) => {
     }
 
     useEffect(()=>{
-        if(curSong==null)
+        if(curSong==null){
             document.title = "MCAT"
-        else if(curSong.title && curSong.artist)
+        }
+        else if(curSong.title && curSong.artist){
             document.title = `${curSong.artist} - ${curSong.title}`
+        }
     },[curSong])
 
     return (

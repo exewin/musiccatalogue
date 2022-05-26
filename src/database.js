@@ -7,8 +7,9 @@ let database = []
 const DATABASE_LABEL = "music_catalogue_database"
 
 export const databaseLoad = () => {
-   const data = localStorage.getItem(DATABASE_LABEL)
-   database = JSON.parse(data)
+    const data = localStorage.getItem(DATABASE_LABEL)
+    if(data)
+        database = JSON.parse(data)
 }
 
 const databaseSave = () => localStorage.setItem(DATABASE_LABEL, JSON.stringify(database))
@@ -38,21 +39,17 @@ export const databaseClear = () => {
 }
 
 export const databaseLogin = (login, password) => {
-    if(!userExists(login))
-    {
+    if(!userExists(login)){
         message.error(`user ${login} not found`)
     }
-    else
-    {
+    else{
         const user = findUser(login)
-        if(user)
-        {
-            if(user.password === password)
-            {
+        if(user){
+            if(user.password === password){
                 message.success(`Welcome ${login}!`, 1)
                 return true
             }
-            else 
+            else
                 message.error(`wrong password`)
         }
     }
@@ -87,7 +84,7 @@ export const databaseAddSong = (login, song, id) => {
 export const databaseRemoveSong = (login, id) => {
     const user = findUser(login)
     if(user){
-        const arr = user.songs.filter(song => song.id != id)
+        const arr = user.songs.filter(song => song.id !== id)
         user.songs = arr
     }
     databaseSave()
@@ -116,8 +113,7 @@ export const databaseSetOptions = (login, options) => {
 }
 
 export const databaseDeleteUser = login => {
-    const filteredDatabase = database.filter(u => u.login != login)
-    database = filteredDatabase
+    database = database.filter(u => u.login !== login)
     databaseSave()
 }
 
@@ -157,19 +153,19 @@ export const databaseClearFilters = (login) => {
 }
 
 const databaseAddStyles = (user, styles) => {
-    let newStyles = styles.concat(user.styles)
-    let removeDuplicates = [...new Set(newStyles)]
+    const newStyles = styles.concat(user.styles)
+    const removeDuplicates = [...new Set(newStyles)]
     user.styles = removeDuplicates
 }
 
 const databaseAddGenres = (user, genres) => {
-    let newgenres = genres.concat(user.genres)
-    let removeDuplicates = [...new Set(newgenres)]
+    const newgenres = genres.concat(user.genres)
+    const removeDuplicates = [...new Set(newgenres)]
     user.genres = removeDuplicates
 }
 
 const findUser = login => {
-    if(database.length > 0)
+    if(database && database.length > 0)
         return database.find(user => user.login === login)
     else
         return false

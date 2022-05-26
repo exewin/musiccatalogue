@@ -8,19 +8,18 @@ import { Button, Input, Form, message, InputNumber, Checkbox } from "antd";
 import { grabIdFromYoutubeUrl, grabIdFromDiscogsUrl } from "../../utils/grabIdFromUrl";
 import { createDiscogsSong } from "../../utils/createDiscogsSong";
 import { splitAndTrim } from "../../utils/splitAndTrim";
-
+import axios from "axios";
 
 const Container = styled.div`
     background-color: #fff;
     border: 1px solid;
 `
 
-const Edit = () => {
+export const Edit = () => {
     const {user} = useContext(Context)
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const idParam = searchParams.get('id')
-    const axios = require('axios').default;
 
     const [stayOnPage, setStayOnPage] = useState(false)
 
@@ -176,5 +175,3 @@ const Edit = () => {
         </Container>
     )
 }
-
-export {Edit}

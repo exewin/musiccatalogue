@@ -13,7 +13,7 @@ background-color: #afb2ca;
 border-radius: 0px 0px 2px 2px;
 `
 
-const Login = () => {
+export const Login = () => {
     const navigate = useNavigate()
     const {user} = useContext(Context)
     const [login, setLogin] = useState("")
@@ -90,6 +90,3 @@ const Login = () => {
         </Container>
     )
 }
-
-export {Login}
-

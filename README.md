@@ -14,8 +14,8 @@ functionalities, MCAT provides are:
 Project made in React
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1024px-React-icon.svg.png" width="18">
 
-![Preview Image uno](https://github.com/exewin/musiccatalogue/blob/master/previewimages/prev1.png)
-![Preview Image uno](https://github.com/exewin/musiccatalogue/blob/master/previewimages/prev2.png)
+![Preview Image uno](./previewimages/prev1.png)
+![Preview Image uno](./previewimages/prev2.png)
 
 ### `npm start`
 

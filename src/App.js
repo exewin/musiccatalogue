@@ -25,7 +25,7 @@ max-width: 1200px;
 margin: 0 auto;
 `
 
-function App() {
+export const App = () => {
 
   useEffect(()=>{
     databaseLoad()
@@ -60,5 +60,3 @@ function App() {
     </>
   )
 }
-
-export default App;

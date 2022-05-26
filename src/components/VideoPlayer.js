@@ -34,7 +34,7 @@ const Title = styled.span`
     text-align: left;
 `
 
-const VideoPlayer = () => {
+export const VideoPlayer = () => {
     const {curSong, setCurSong} = useContext(Context)
     const [minimalized, setMinimalized] = useState(false)
     return(
@@ -55,5 +55,3 @@ const VideoPlayer = () => {
         </Container>
     )
 }
-
-export {VideoPlayer}

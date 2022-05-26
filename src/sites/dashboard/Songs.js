@@ -26,6 +26,16 @@ const Img = styled.img`
     width:16px;
 `
 
+const Margin = styled.div`
+    margin-top: 100px;
+    margin-bottom: 100px;
+`
+
+const DropdownMargin = styled.div`
+    padding: 4px;    
+    margin: 0px 2px;
+`
+
 const Index = styled.span`
 font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 `
@@ -72,7 +82,7 @@ const Pulse = styled.div`
     text-align: center;
 `
 
-const Songs = () => {
+export const Songs = () => {
 
     const artistRef = useRef(null)
     const titleRef = useRef(null)
@@ -187,7 +197,7 @@ const Songs = () => {
     }
 
     const emptyTableScreen = {
-        emptyText: <><br/><br/><br/><br/><br/><Empty  description="This list is empty..." /><br/><br/><br/></>
+        emptyText: <Margin><Empty description="This list is empty..." /></Margin>
     }
 
     const columns = [
@@ -196,7 +206,9 @@ const Songs = () => {
         render: (_, __, i) => <Index>{i+1}</Index>
     },
     {
-        title: 'Artist', dataIndex: 'artist', key: 'artist',
+        title: 'Artist', 
+        dataIndex: 'artist', 
+        key: 'artist',
         showSorterTooltip: false,
         sortOrder: sortedInfo.columnKey === 'artist' ? sortedInfo.order : null,
         sorter: (a, b) => a.artist > b.artist ? 1 : -1,
@@ -204,7 +216,7 @@ const Songs = () => {
         onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => artistRef.current.focus(), 25),
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
             return( 
-                <><Search
+                <DropdownMargin><Search
                     ref={artistRef}
                     value={selectedKeys[0]}
                     onChange={(e)=>{
@@ -218,7 +230,7 @@ const Songs = () => {
                 <Button size="small" onClick={()=>{
                     clearFilters()
                     confirm()
-                }}>Clear</Button></>
+                }}>Clear</Button></DropdownMargin>
             )
         },
         filterIcon: () => <SearchOutlined/>,
@@ -226,7 +238,9 @@ const Songs = () => {
         
     },
     {
-        title: 'Title', dataIndex: 'title', key: 'title',
+        title: 'Title', 
+        dataIndex: 'title', 
+        key: 'title',
         showSorterTooltip: false,
         sortOrder: sortedInfo.columnKey === 'title' ? sortedInfo.order : null,
         sorter: (a, b) => a.title > b.title ? 1 : -1,
@@ -234,7 +248,7 @@ const Songs = () => {
         onFilterDropdownVisibleChange: (visible) => visible && setTimeout(() => titleRef.current.focus(), 25),
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
             return( 
-                <><Search
+                <DropdownMargin><Search
                     ref={titleRef}
                     value={selectedKeys[0]}
                     onChange={(e)=>{
@@ -248,21 +262,25 @@ const Songs = () => {
                 <Button size="small" onClick={()=>{
                     clearFilters()
                     confirm()
-                }}>Clear</Button></>
+                }}>Clear</Button></DropdownMargin>
             )
         },
         filterIcon: () => <SearchOutlined/>,
         onFilter: (value, record) => record.title.toLowerCase().includes(value.toLowerCase()),
     },
     {
-        title: 'Year', dataIndex: 'year', key: 'year',
+        title: 'Year', 
+        dataIndex: 'year', 
+        key: 'year',
         sortOrder: sortedInfo.columnKey === 'year' ? sortedInfo.order : null,
         showSorterTooltip: false,
         sorter: (a, b) => a.year - b.year,
         render: (td) => <Number color={yearScale(td)}>{td}</Number> ,
     },
     {
-        title: `Genres`, dataIndex: 'genres', key: 'genres',
+        title: `Genres`, 
+        dataIndex: 'genres', 
+        key: 'genres',
         filterMultiple: false,
         filters: mappedGenreFilters,
         filteredValue: filteredInfo.genres || null,
@@ -275,7 +293,7 @@ const Songs = () => {
                     <FilterDropdown>
                         {filters.sort((a, b) => a.text > b.text ? 1 : -1).map((f, i)=><Tag 
                             key={i}
-                            selected={filteredInfo.genres && filteredInfo.genres[0] === f.text ? true : false}
+                            selected={filteredInfo.genres && filteredInfo.genres[0] === f.text}
                             color={mappedGenreFilters.find(a=>a.text === f.text) ? mappedGenreFilters.find(a=>a.text === f.text).color : ""}
                             handleClick={() => {
                                 filterWithTag(f.value, "genres") 
@@ -296,7 +314,7 @@ const Songs = () => {
                 {
                     tags && tags.map((tag, i) => 
                     <Tag 
-                        selected={filteredInfo.genres && filteredInfo.genres[0] === tag ? true : false}
+                        selected={filteredInfo.genres && filteredInfo.genres[0] === tag}
                         key={i}
                         color={mappedGenreFilters.find(a=>a.text === tag) ? mappedGenreFilters.find(a=>a.text === tag).color : ""}
                         handleClick={() => filterWithTag(tag, "genres")}
@@ -306,7 +324,9 @@ const Songs = () => {
         ),
     },
     {
-        title: `Styles`, dataIndex: 'styles', key: 'styles',
+        title: `Styles`, 
+        dataIndex: 'styles', 
+        key: 'styles',
         filterMultiple: false,
         hidden: hiddenInfo.styles,
         filters: mappedStyleFilters,
@@ -320,7 +340,7 @@ const Songs = () => {
                     <FilterDropdown>
                         {filters.sort((a, b) => a.text > b.text ? 1 : -1).map((f, i)=><Tag 
                             key={i}
-                            selected={filteredInfo.styles && filteredInfo.styles[0] === f.text ? true : false}
+                            selected={filteredInfo.styles && filteredInfo.styles[0] === f.text}
                             color={mappedStyleFilters.find(a=>a.text === f.text) ? mappedStyleFilters.find(a=>a.text === f.text).color : ""}
                             handleClick={() => {
                                 filterWithTag(f.value, "styles") 
@@ -342,7 +362,7 @@ const Songs = () => {
                     tags && tags.map((tag, i) => 
                     <Tag
                         key={i}
-                        selected={filteredInfo.styles && filteredInfo.styles[0] === tag ? true : false}
+                        selected={filteredInfo.styles && filteredInfo.styles[0] === tag}
                         color={mappedStyleFilters.find(a=>a.text === tag) ? mappedStyleFilters.find(a=>a.text === tag).color : ""}
                         handleClick={() => filterWithTag(tag, "styles")}
                     >{tag}</Tag>)
@@ -351,7 +371,9 @@ const Songs = () => {
         ),
     },
     {
-        title: 'Rating', dataIndex: 'rating', key: 'rating',
+        title: 'Rating', 
+        dataIndex: 'rating', 
+        key: 'rating',
         width: 25,
         align: 'center',
         sortOrder: sortedInfo.columnKey === 'rating' ? sortedInfo.order : null,
@@ -420,5 +442,3 @@ const Songs = () => {
         </Container>
         )
 }
-
-export {Songs}

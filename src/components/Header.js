@@ -26,7 +26,7 @@ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 user-select: none;
 `
 
-const Header = () => {
+export const Header = () => {
     return(
         <Container>
             <LogoContainer title="Music Catalogue by exewin">
@@ -35,6 +35,3 @@ const Header = () => {
         </Container>
     )
 }
-
-export {Header}
-

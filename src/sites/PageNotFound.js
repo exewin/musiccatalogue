@@ -14,7 +14,7 @@ const Error = styled.p`
     padding-top: 25px;
 `
 
-const PageNotFound = () => {
+export const PageNotFound = () => {
     return(
         <Container>
             <Error>404 page not found</Error>
@@ -23,5 +23,3 @@ const PageNotFound = () => {
         </Container>
         )
 }
-
-export {PageNotFound}
