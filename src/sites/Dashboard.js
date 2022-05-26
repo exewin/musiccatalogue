@@ -5,6 +5,8 @@ import {useNavigate} from "react-router-dom";
 import {Link, Outlet} from "react-router-dom";
 import {Button} from "antd"
 import { ScrollToTop } from "../components/ScrollToTop";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faList, faUserGear, faAdd } from '@fortawesome/free-solid-svg-icons'
 
 
 const ProfileBox = styled.div`
@@ -39,9 +41,9 @@ export const Dashboard = () => {
     return(
         <ProfileBox>
             <p title={`Hello sir ${user.userData.login}`}>User: <Username>{user.userData.login}</Username> </p>
-            <Link to="/dashboard/songs"><Button title="Display full list of songs">List 📜</Button></Link>
-            <Link to="/dashboard/edit"><Button title="Add song to list">Add ✏️</Button></Link>
-            <Link to="/dashboard/options"><Button title="Additional functionalities">Options 🔨</Button></Link>
+            <Link to="/dashboard/songs"><Button title="Display full list of songs">List <FontAwesomeIcon style={{marginLeft:'5px'}} icon={faList} /></Button></Link>
+            <Link to="/dashboard/edit"><Button title="Add song to list">Add<FontAwesomeIcon style={{marginLeft:'5px'}} icon={faAdd} /></Button></Link>
+            <Link to="/dashboard/options"><Button title="Additional functionalities">Options <FontAwesomeIcon style={{marginLeft:'5px'}} icon={faUserGear} /></Button></Link>
             <Button title="Logout and return to login screen" onClick={logout}>Logout</Button>
             <hr/>
             <Outlet/>

@@ -6,11 +6,11 @@ import { databaseGetListInfo, databaseRemoveSong, databaseSetOptions } from "../
 import { Table, Space, Popconfirm, Switch, Form, Input, Empty, Button} from 'antd'
 import { Tag } from "../../components/Tag"
 import { SearchOutlined } from "@ant-design/icons"
-import youtubeIcon from "../../images/youtubeIcon.png"
-import discogsIcon from "../../images/discogsIcon.png"
 import chroma from 'chroma-js'
 import { createDefaultOptions } from "../../utils/createDefaultOptions"
 import { getColor } from "../../utils/getColorBasedOnString"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMusic, faArrowUpRightFromSquare, faRecordVinyl, faTrashCan, faPencil } from '@fortawesome/free-solid-svg-icons'
 
 const ratingScale = chroma.scale(['red', 'orange', 'gold',"green", 'teal', 'purple']).domain([1,40,64,80,90,100,100])
 const yearScale = chroma.scale(['steelblue', 'lightseagreen', 'seagreen', 'olive', 'darkgoldenrod', 'salmon']).domain([1960,2025])
@@ -64,21 +64,21 @@ const FilterDropdown = styled.div`
 
 const anima = keyframes`
   0% {
-    transform: scale(1.6 , 0.5);
+    transform: scale(1.6 , 0.6);
   }
   30% {
-    transform: scale(1.55 , 0.55);
+    transform: scale(1.55 , 0.65);
   }
   70% {
-    transform: scale(0.84 , 1.26);
+    transform: scale(0.84 , 1.16);
   }
   100% {
-    transform: scale(0.8 , 1.3);
+    transform: scale(0.8 , 1.2);
   }
 `
 
 const Pulse = styled.div`
-    animation: ${anima} 0.3s alternate infinite;
+    animation: ${anima} 0.25s alternate infinite;
     text-align: center;
 `
 
@@ -387,16 +387,22 @@ export const Songs = () => {
         align: "right",
         render: (song) => (
             <Space>
-            {song.url && <a onClick={()=>handlePlayButton(song)} title="Play song">{curSong && song.url === curSong.url ? <Pulse>🎵</Pulse> : '🎵'}</a>}
-            {song.url && <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube"><Img src={youtubeIcon}/></a>}
-            {song.discogsUrl && <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" title="Open on Discogs"><Img src={discogsIcon}/></a>}
-            <a onClick={()=>handleEditButton(song.id)} title="Edit song details">🔧</a>
+            {
+                song.url && 
+                <a onClick={()=>handlePlayButton(song)} title="Play song">
+                    {curSong && song.url === curSong.url ? <Pulse><FontAwesomeIcon icon={faMusic} /></Pulse> : <FontAwesomeIcon icon={faMusic} />}
+                </a>
+            }
+            
+            {song.url && <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube"><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a>}
+            {song.discogsUrl && <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" title="Open on Discogs"><FontAwesomeIcon icon={faRecordVinyl} /></a>}
+            <a onClick={()=>handleEditButton(song.id)} title="Edit song details"><FontAwesomeIcon icon={faPencil} /></a>
             <Popconfirm
                 title="Remove this song?"
                 onConfirm={()=>handleRemoveButton(song.id)}
                 okText="Yes"
                 cancelText="No"
-            ><a title="Delete song">❌</a>
+            ><a title="Delete song"><FontAwesomeIcon icon={faTrashCan} /></a>
             </Popconfirm>
             </Space>
         ),
