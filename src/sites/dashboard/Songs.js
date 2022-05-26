@@ -26,6 +26,10 @@ const Img = styled.img`
     width:16px;
 `
 
+const Index = styled.span`
+font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+`
+
 const Number = styled.span`
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     padding: 5px;
@@ -187,7 +191,7 @@ const Songs = () => {
     const columns = [
     {
         title:"#",
-        render: () => <>{++index/2}</>
+        render: () => <Index>{++index/2}</Index>
     },
     {
         title: 'Artist', dataIndex: 'artist', key: 'artist',
