@@ -181,7 +181,13 @@ const Songs = () => {
         emptyText: <><br/><br/><br/><br/><br/><Empty  description="This list is empty..." /><br/><br/><br/></>
     }
 
+    let index = 0;
+
     const columns = [
+    {
+        title:"#",
+        render: () => <>{++index/2}</>
+    },
     {
         title: 'Artist', dataIndex: 'artist', key: 'artist',
         showSorterTooltip: false,
