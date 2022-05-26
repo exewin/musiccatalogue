@@ -55,7 +55,20 @@ export const Edit = () => {
             style: styles && styles.join(","),
             discogsUrl: discogsUrl,
             rating: rating ? rating : ratingValue,
-        });
+        })
+    }
+
+    const clearForm = () => {
+        form.setFieldsValue({
+            url:"",
+            title:"",
+            artist:"",
+            year:"",
+            genre:"",
+            style:"",
+            discogsUrl:"",
+            rating:50,
+        })
     }
 
     const sendData = () => {
@@ -72,6 +85,8 @@ export const Edit = () => {
         databaseAddSong(user.userData.login, songObject, idParam)
         if(!stayOnPage)
             navigate(`/dashboard/songs`)
+
+        clearForm()
     }
 
     const fetchFromDiscogs = async() => {
