@@ -32,6 +32,10 @@ const Icon = styled.span`
     }
 `
 
+const InfoText = styled.div`
+    margin-bottom: 2px;
+`
+
 const Margin = styled.div`
     margin-top: 100px;
     margin-bottom: 100px;
@@ -146,7 +150,7 @@ export const Songs = () => {
         setTableInfo(info)
     }
     
-    const handleTableChange = (pagination, filters, sorter) => {
+    const handleTableChange = (_, filters, sorter) => {
         handleTable({
             ...tableInfo,
             filteredInfo: filters,
@@ -414,6 +418,21 @@ export const Songs = () => {
         ),
       },
     ].filter(col => !col.hidden)
+
+    const filterText = () =>{
+        const genre = filteredInfo.genres ? filteredInfo.genres : ""
+        const style = filteredInfo.styles && !hiddenInfo.styles ? filteredInfo.styles : ""
+        const artist = filteredInfo.artist ? `Artist(${filteredInfo.artist})` : ""
+        const title = filteredInfo.title ? `Title(${filteredInfo.title})` : ""
+        return genre || style || artist || title ? `Active Filters: ${[genre, style, artist, title].filter(i=>i!=="").join(", ")}` : " "
+    }
+
+    const yearText = () =>{
+        if(!sortedInfo.columnKey) return " "
+        if(!sortedInfo.order) return " "
+        if(sortedInfo.columnKey==='rating' && hiddenInfo.rating) return " "
+        return `Sorting by: ${sortedInfo.columnKey} (${sortedInfo.order})`
+    }
     
     return(
         <Container>
@@ -436,21 +455,23 @@ export const Songs = () => {
                     </Form.Item>
                 }
             </Form>
-                <Table
-                    onChange={handleTableChange}
-                    loading={loading}
-                    locale={emptyTableScreen}
-                    rowKey={record => record.id}
-                    size="small"
-                    pagination={{pageSize:9999, hideOnSinglePage:true}}
-                    columns={columns}
-                    dataSource={songs}
-                    onRow={(song) => {
-                        return {
-                        onDoubleClick: () => {song.url && handlePlayButton(song)}
-                        }
-                    }}
-                />
+            <InfoText>{filterText()}</InfoText>
+            <InfoText>{yearText()}</InfoText>
+            <Table
+                onChange={handleTableChange}
+                loading={loading}
+                locale={emptyTableScreen}
+                rowKey={record => record.id}
+                size="small"
+                pagination={{pageSize:9999, hideOnSinglePage:true}}
+                columns={columns}
+                dataSource={songs}
+                onRow={(song) => {
+                    return {
+                    onDoubleClick: () => {song.url && handlePlayButton(song)}
+                    }
+                }}
+            />
         </Container>
         )
 }
