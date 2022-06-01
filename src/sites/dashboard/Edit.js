@@ -38,11 +38,13 @@ export const Edit = () => {
     useEffect(()=>{
         if(idParam)
             setSongEdit(databaseGetConcreteSong(user.userData.login, idParam))
-    },[])
+    },[idParam, user.userData.login])
 
     useEffect(()=>{
         if(Object.keys(songEdit).length)
             fillForm(songEdit)
+            
+        // eslint-disable-next-line
     },[songEdit])
 
     const fillForm = ({url, title, artist, year, genres, styles, discogsUrl, rating}) => {

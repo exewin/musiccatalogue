@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react"
-import styled, {keyframes} from "styled-components"
+import styled from "styled-components"
 import { Context } from "../../Context"
 import { useNavigate } from "react-router"
 import { databaseGetListInfo, databaseRemoveSong, databaseSetOptions } from "../../database"
@@ -22,8 +22,14 @@ const Container = styled.div`
     margin-bottom: 25px;
 `
 
-const Img = styled.img`
+const Icon = styled.span`
     width:16px;
+    cursor:pointer;
+    color:#1890ff;
+    transition: color 0.2s;
+    &:hover{
+        color:#40a9ff;
+    }
 `
 
 const Margin = styled.div`
@@ -90,18 +96,19 @@ export const Songs = () => {
     
     useEffect(()=>{
         updateSongList()
+        // eslint-disable-next-line
     },[])
 
     useEffect(()=>{
         if(tableInfo.hasOwnProperty("sortedInfo"))
             databaseSetOptions(user.userData.login, tableInfo)
-    },[tableInfo])
+    },[tableInfo, user.userData.login])
 
     useEffect(() => {
         if(loading){
             const timer = setTimeout(() => {
                 setLoading(false)
-            }, 250)
+            }, 100)
             return () => clearTimeout(timer)
         }
     }, [loading])
@@ -377,31 +384,31 @@ export const Songs = () => {
             <Space>
             {
                 song.url && 
-                <a onClick={()=>handlePlayButton(song)} title="Play song">
+                <Icon onClick={()=>handlePlayButton(song)} title="Play song">
                     {curSong && song.url === curSong.url ? <Pulse><FontAwesomeIcon icon={faMusic} size={iconSize}/></Pulse> : <FontAwesomeIcon icon={faMusic} size={iconSize}/>}
-                </a>
+                </Icon>
             }
             
             {
                 song.url &&
-                <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" title="Open on YouTube">
+                <a href={`https://www.youtube.com/watch?v=${song.url}`} target="_blank" rel="noopener noreferrer" title="Open on YouTube">
                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} size={iconSize}/>
                 </a>
             }
 
             {
                 song.discogsUrl &&
-                <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" title="Open on Discogs">
+                <a href={`https://www.discogs.com/release/${song.discogsUrl}`} target="_blank" rel="noopener noreferrer" title="Open on Discogs">
                     <FontAwesomeIcon icon={faRecordVinyl} size={iconSize} />
                 </a>
             }
-            <a onClick={()=>handleEditButton(song.id)} title="Edit song details"><FontAwesomeIcon icon={faPencil} size={iconSize}/></a>
+            <Icon onClick={()=>handleEditButton(song.id)} title="Edit song details"><FontAwesomeIcon icon={faPencil} size={iconSize}/></Icon>
             <Popconfirm
                 title="Remove this song?"
                 onConfirm={()=>handleRemoveButton(song.id)}
                 okText="Yes"
                 cancelText="No"
-            ><a title="Delete song"><FontAwesomeIcon icon={faTrashCan} size={iconSize}/></a>
+            ><Icon title="Delete song"><FontAwesomeIcon icon={faTrashCan} size={iconSize}/></Icon>
             </Popconfirm>
             </Space>
         ),

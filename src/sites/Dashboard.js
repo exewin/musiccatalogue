@@ -32,7 +32,7 @@ export const Dashboard = () => {
         {
             navigate("/")
         }
-    },[user])
+    },[user, navigate])
 
     const logout = () => {
         user.set("", false)

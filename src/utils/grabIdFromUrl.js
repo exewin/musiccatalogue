@@ -10,7 +10,7 @@ export const grabIdFromYoutubeUrl = url => {
 }
 
 export const grabIdFromDiscogsUrl = url => {
-        const reg = new RegExp('(?<=\/)[0-9]+(?=\-)')
+        const reg = new RegExp('(?<=/)[0-9]+(?=-)')
         if(reg.test(url))
         {
             return url.match(reg)[0]
