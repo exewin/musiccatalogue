@@ -1,6 +1,8 @@
 ## MCAT - Music Catalogue
 
-> https://mcat.netlify.app/
+https://mcat.netlify.app/
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b7cb80b3-2118-4c0f-a865-58af158b854b/deploy-status)](https://app.netlify.com/sites/mcat/deploys)
 
 ### Quick setup
 
