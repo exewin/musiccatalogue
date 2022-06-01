@@ -110,6 +110,7 @@ export const databaseSetOptions = (login, options) => {
     const user = findUser(login)
     if(user)
         user.options = options
+    databaseSave()
 }
 
 export const databaseDeleteUser = login => {
@@ -126,6 +127,7 @@ export const databaseSaveToFile = () => {
 export const databaseLoadFromFile = text => {
     const db = JSON.parse(text)
     database = db
+    message.info(`database loaded.`)
     databaseSave()
 }
 
