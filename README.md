@@ -6,9 +6,9 @@ https://mcat.netlify.app/
 
 ### Quick setup
 
-If you are running MCAT first time, you may want to load example database to test functionalities. You may find one in:
+If you are running MCAT first time, you may want to load example database to test functionalities. You may find one [here](https://downgit.github.io/#/home?url=https://github.com/exewin/musiccatalogue/blob/master/extras/exampleDatabase.json).
 
-**/extras/exampleDatabase.json** (login: user, password: user)
+(login: user, password: user)
 
 ### Description
 
