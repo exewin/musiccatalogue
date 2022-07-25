@@ -23,6 +23,10 @@ Additional functionalities, app provides are:
 - Mini video player (YouTube embed)
 - Saving and loading .json database file
 
+Preview video:
+https://www.youtube.com/watch?v=t33lYxKAx8w
+
+Preview images:
 ![Preview Image uno](./previewimages/prev1.png)
 ![Preview Image uno](./previewimages/prev2.png)
 
